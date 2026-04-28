@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fullui"
+version = "0.1.0"
+description = "Advanced console UI system with colors, gradients and customizable menus"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {text = "MIT"}
+authors = [
+{name = "Leonardo Farid Porras Bendezú (LeonardX007)"}
+]
+
+keywords = ["cli", "ui", "console", "colors", "menus", "ansi", "terminal"]
+
+classifiers = [
+"Programming Language :: Python :: 3",
+"License :: OSI Approved :: MIT License",
+"Operating System :: OS Independent",
+"Environment :: Console",
+"Intended Audience :: Developers",
+"Topic :: Software Development :: Libraries"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/LeonardX007/fullui"
+"Source" = "https://github.com/LeonardX007/fullui"
+
+[tool.setuptools.packages.find]
+where = ["."]
