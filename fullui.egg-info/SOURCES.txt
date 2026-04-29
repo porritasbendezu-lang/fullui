@@ -1,0 +1,10 @@
+LICENSE
+README.md
+pyproject.toml
+fullui/__init__.py
+fullui/colors.py
+fullui/ui.py
+fullui.egg-info/PKG-INFO
+fullui.egg-info/SOURCES.txt
+fullui.egg-info/dependency_links.txt
+fullui.egg-info/top_level.txt

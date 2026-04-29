@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fullui"
-version = "0.1.0"
+version = "0.1.1"
 description = "Advanced console UI system with colors, gradients and customizable menus"
 readme = "README.md"
 requires-python = ">=3.7"
@@ -25,8 +25,9 @@ classifiers = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/LeonardX007/fullui"
-"Source" = "https://github.com/LeonardX007/fullui"
+Homepage = "https://github.com/porritasbendezu-lang/fullui"
+Source = "https://github.com/porritasbendezu-lang/fullui"
+Issues = "https://github.com/porritasbendezu-lang/fullui/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]

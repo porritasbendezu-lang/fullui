@@ -1,4 +1,4 @@
-from colors import C, S, BG
+from .colors import C, S, BG
 import os
 
 # ===== EDITABLES =====
