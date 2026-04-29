@@ -7,7 +7,7 @@ Advanced console UI system for Python terminals.
 # VERSION
 # =========================================================
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 
 # =========================================================
@@ -29,6 +29,7 @@ from . import colors
 from . import ui
 from . import animations
 from . import themes
+from . import layouts
 
 
 # =========================================================
@@ -62,14 +63,9 @@ from .colors import (
 
 # =========================================================
 # FULLUI BANNER
-# Manual use:
-# import fullui; fullui.banner()
 # =========================================================
 
 def banner():
-    """
-    Display FULLUI banner.
-    """
 
     print(
 f"""{C.c}{S.bd}
@@ -86,9 +82,21 @@ Advanced Console UI Framework
 
 {C.g}✔ Installed successfully
 
+{C.y}Features:{S.rs}
+• Menus
+• Themes
+• Animations
+• Layout System (NEW)
+
 {C.y}Quick Start:{S.rs}
 
 from fullui import *
+
+panel(
+    "Welcome",
+    title="HOME"
+)
+
 menu(
     t="Main Menu",
     op=["Play","Exit"]
@@ -108,7 +116,6 @@ python -c "import fullui; fullui.banner()"
     )
 
 
-# Alias
 about = banner
 
 
@@ -130,7 +137,6 @@ from .ui import (
     line_break,
     lb,
 
-    # DEV TOOLS
     system_panel,
     themes_manager,
     animations_preview,
@@ -144,12 +150,33 @@ from .ui import (
 
 
 # =========================================================
+# PUBLIC API - LAYOUTS (NEW)
+# =========================================================
+
+from .layouts import (
+    Panel,
+    panel,
+
+    info_panel,
+    warning_panel,
+    error_panel,
+
+    columns,
+    split,
+
+    stat,
+    dashboard,
+
+    Grid
+)
+
+
+# =========================================================
 # PUBLIC API - ANIMATIONS
 # =========================================================
 
 from .animations import (
 
-    # Original
     spinner,
     dot_ripple,
     bounce,
@@ -163,7 +190,6 @@ from .animations import (
     scanline,
     glitch,
 
-    # New v0.2.0
     loading_dots,
     progress_fill,
     typing,
@@ -267,6 +293,23 @@ __all__ = [
     "register_theme",
     "register_color",
     "register_animation",
+
+
+    # LAYOUTS
+    "Panel",
+    "panel",
+
+    "info_panel",
+    "warning_panel",
+    "error_panel",
+
+    "columns",
+    "split",
+
+    "stat",
+    "dashboard",
+
+    "Grid",
 
 
     # ANIMATIONS

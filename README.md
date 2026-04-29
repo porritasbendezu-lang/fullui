@@ -11,116 +11,55 @@ FULLUI is a powerful and lightweight **console UI framework for Python**, design
 * 🎨 ANSI + RGB color system
 * 🌈 Advanced gradients
 * ✨ Text styling system
-* 🧱 Decorative boxes & layouts
+* 🧱 Decorative boxes
+* 🪟 Layout System (NEW)
 * 🎮 Flexible alias-based menu system
 * ⚡ Terminal animations
 * 🎭 Plug & Play Theme Engine
-* 🛠️ Developer Tools Panel *(NEW)*
-* 📦 Registry System *(NEW)*
-* 🎬 Animation Preview System *(NEW)*
-* 🎉 Welcome Banner System *(NEW)*
+* 🛠 Developer Tools Panel
+* 📦 Registry System
+* 🎉 Welcome Banner System
 * 🧠 Modular architecture
 
 ---
 
-# 🆕 New in v0.2.0
+# 🆕 New in v0.2.1
 
-## Added
+## 🪟 Layout System Added
 
-## 🛠 Developer Tools System
-
-Built-in terminal tools for development:
-
-```python
-from fullui import system_panel
-system_panel()
-```
-
-Includes:
-
-* Themes Manager
-* Color Inspector
-* Animations Preview
-* Registry Inspector
-* System Info Panel
-
----
-
-## 🎭 10 New Themes
-
-```python
-from fullui import set_theme, HACKER
-set_theme(HACKER)
-```
-
-Available themes:
-
-DEFAULT, DARK, NEON, FIRE, ICE
-
-New:
-
-HACKER, VOID, ELECTRIC, NIGHT, ALERT, FROST, NATURE, DEV, GAMER, BRUTAL
-
----
-
-## 🎬 New Animations
+Build terminal layouts and panels easily.
 
 ```python
 from fullui import *
 
-loading_dots()
-progress_fill()
-typing("Hello World")
-countdown()
-success_check()
-loading_bar_wave()
-```
-
-New effects:
-
-* loading_dots()
-* progress_fill()
-* typing()
-* countdown()
-* success_check()
-* loading_bar_wave()
-
----
-
-## 🎨 Expanded Color System
-
-```python
-C.gold
-C.neon_green
-C.electric_blue
-C.fire_orange
-C.deep_pink
-C.wine
-```
-
-RGB:
-
-```python
-print(rgb(255,120,0)+"Hello")
-```
-
----
-
-## 📦 Registry System
-
-```python
-register_theme("mytheme", my_theme)
-
-register_color(
-    "danger",
-    rgb(255,0,0)
+panel(
+    "Stats",
+    "HP:100\nMana:50"
 )
 
-register_animation(
-    "shake",
-    my_animation
+columns(
+    [
+        "Inventory",
+        "Map",
+        "Player"
+    ]
 )
 ```
+
+Included:
+
+* panel()
+* columns()
+* split()
+* dashboard()
+* stack()
+
+Perfect for:
+
+- dashboards
+- game HUDs
+- terminal apps
+- status panels
 
 ---
 
@@ -140,31 +79,12 @@ register_animation(
 pip install fullui
 ```
 
-## ✨ Verify Installation (Optional)
+---
 
-Show FULLUI welcome banner after install:
+## ✨ Verify Installation
 
 ```bash
-pip install fullui
 python -c "import fullui; fullui.banner()"
-```
-
-Example:
-
-```python
-import fullui
-fullui.banner()
-```
-
-Displays:
-
-```text
-███████╗██╗   ██╗██╗     ██╗     ██╗   ██╗██╗
-...
-
-🎨 FULLUI v0.2.0
-Advanced Console UI Framework
-✔ Installed successfully
 ```
 
 ---
@@ -190,13 +110,18 @@ menu(
 # 🧩 Recommended Import Style
 
 ```python
-from fullui.colors import C, S
+from fullui.colors import C,S
 from fullui.ui import menu
+from fullui.layouts import panel
+
+panel(
+   "Profile",
+   "Level 12"
+)
 
 choice = menu(
-    t="Menu",
-    st="Choose",
-    op=["Start","Exit"]
+   t="Menu",
+   op=["Start","Exit"]
 )
 ```
 
@@ -249,7 +174,42 @@ set_theme(my_theme)
 
 ---
 
-# 🎨 Colors & Styles
+# 🪟 Layout Examples
+
+## Panel
+
+```python
+panel(
+ "Player",
+ "HP:100\nMana:50"
+)
+```
+
+## Columns
+
+```python
+columns(
+ [
+   "Inventory",
+   "Map",
+   "Stats"
+ ]
+)
+```
+
+## Dashboard
+
+```python
+dashboard([
+ "CPU 40%",
+ "RAM 62%",
+ "ONLINE"
+])
+```
+
+---
+
+# 🎨 Colors
 
 ```python
 print(C.r+"Red"+S.rs)
@@ -258,28 +218,10 @@ print(S.bd+"Bold"+S.rs)
 
 ---
 
-# 🧱 Boxes
-
-```python
-print(box1("Hello"))
-print(box4("Warning"))
-```
-
----
-
 # 🌈 Gradients
 
 ```python
 print(rainbow("FULLUI"))
-
-print(
- customGra(
-   "Gradient",
-   C.r,
-   C.g,
-   C.b
- )
-)
 ```
 
 ---
@@ -307,7 +249,7 @@ menu(
 
 Aliases:
 
-t, st, op, bs, etc.
+t, st, op, bs...
 
 ---
 
@@ -326,124 +268,55 @@ pause()
 from fullui import *
 ```
 
-Everything exposed through **all**.
+Everything exposed through `__all__`.
 
 ---
 
-# 🆕 Patch Notes — v0.2.0
+# 🆕 Patch Notes — v0.2.1
 
-## Major Features Added
+## Added
 
-## Developer Tools Suite
+### Layout System
 
-Added:
+New module:
 
-* system_panel()
-* themes_manager()
-* animations_preview()
-* system_info()
-* registry_inspector()
-
----
-
-## Theme Engine Expanded
-
-Added 10 new themes plus:
-
-* titleColorMargins
-* break key theming
-* theme previews
-* theme manager UI
-
----
-
-## Animation Expansion
-
-Added:
-
-* loading_dots
-* progress_fill
-* typing
-* countdown
-* success_check
-* loading_bar_wave
-
----
-
-## Registry System Added
-
-Supports:
-
-* register_theme()
-* register_color()
-* register_animation()
-
----
-
-## Welcome Banner Added
-
-Added:
-
-* banner()
-* about() alias
-
-Quick verification:
-
-```bash
-python -c "import fullui; fullui.banner()"
+```python
+fullui.layouts
 ```
 
----
+Functions added:
 
-## Color System Expanded
-
-Added:
-
-* Gold
-* Lime
-* Neon Green
-* Electric Blue
-* Fire Orange
-* Deep Pink
-* Wine
-* Steel Gray
+* panel()
+* columns()
+* split()
+* stack()
+* dashboard()
 
 ---
 
 ## Improvements
 
-* breakSimbol typo fixed -> breakSymbol
-* Improved clear screen behavior
-* Better title rendering
-* Better theme contrast
-* Improved menu exit behavior
+* Better architecture for future widgets
+* Layout API designed for expansion
+* Foundation for Data UI module
+* Cleaner module organization
 
 ---
 
-## Behavior Changes
+## Internal
 
-menu() exit now returns:
-
-```python
-None
-```
-
-instead of:
-
-```python
-"break"
-```
+* Added layouts to public API
+* Updated package exports
+* Prepared roadmap for widgets
 
 ---
 
-# 🚀 Roadmap
+## Fixed
 
-* Keyboard navigation
-* Panel layouts
-* Real-time menus
-* JSON themes
-* State management
-* Mouse terminal support
+* breakSymbol naming cleanup
+* minor layout width handling
+* documentation improvements
+
 
 ---
 
@@ -455,5 +328,5 @@ MIT License
 
 # 👨‍💻 Author
 
-**Leonardo Farid Porras Bendezú**
+**Leonardo Farid Porras Bendezú**  
 aka **LeonardX007**
