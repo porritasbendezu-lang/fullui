@@ -1,33 +1,81 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
+
 
 [project]
 name = "fullui"
-version = "0.1.1"
-description = "Advanced console UI system with colors, gradients and customizable menus"
+version = "0.1.2"
+description = "Advanced console UI framework for Python with colors, animations, themes and interactive menus"
 readme = "README.md"
 requires-python = ">=3.7"
-license = {text = "MIT"}
+
+license = { text = "MIT" }
+
 authors = [
-{name = "Leonardo Farid Porras Bendezú (LeonardX007)"}
+    { name = "Leonardo Farid Porras Bendezu", email = "porritasbendezu@gmail.com" }
 ]
 
-keywords = ["cli", "ui", "console", "colors", "menus", "ansi", "terminal"]
+keywords = [
+    "cli", "ui", "console", "terminal",
+    "ansi", "colors", "menus",
+    "tui", "framework", "animations"
+]
 
 classifiers = [
-"Programming Language :: Python :: 3",
-"License :: OSI Approved :: MIT License",
-"Operating System :: OS Independent",
-"Environment :: Console",
-"Intended Audience :: Developers",
-"Topic :: Software Development :: Libraries"
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+
+    "Environment :: Console",
+
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: User Interfaces",
+    "Topic :: Terminals"
 ]
+
+dependencies = [
+    "colorama>=0.4.6"
+]
+
 
 [project.urls]
 Homepage = "https://github.com/porritasbendezu-lang/fullui"
 Source = "https://github.com/porritasbendezu-lang/fullui"
 Issues = "https://github.com/porritasbendezu-lang/fullui/issues"
+Documentation = "https://github.com/porritasbendezu-lang/fullui#readme"
+
+
+# =========================================================
+# SETUPTOOLS CONFIG
+# =========================================================
+
+[tool.setuptools]
+include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["."]
+include = ["fullui*"]
+
+
+# =========================================================
+# OPTIONAL: DEVELOPMENT CONFIG
+# =========================================================
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "build",
+    "twine"
+]

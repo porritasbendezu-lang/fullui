@@ -1,31 +1,58 @@
+"""
+ui.py
+
+Core interface system for FULLUI.
+
+Provides:
+- Console menus
+- Titles and subtitles
+- Options rendering
+- Input handling
+- Improved CLI flow utilities (validation + loop)
+"""
+
+
+# =========================================================
+# IMPORTS
+# =========================================================
+
 from .colors import C, S, BG
+from .themes import apply_theme  # 🔥 NEW: apply themes automatically
 import os
 
-# ===== EDITABLES =====
+
+# =========================================================
+# IDENTIFIERS (ALIAS SYSTEM)
+# =========================================================
 
 class I:
-    # ===== TEXTOS =====
-    t   = "titleText"
+    """
+    Alias registry for menu parameters.
+    Allows short or long keys interchangeably.
+    """
+
+    # TEXT
+    t = "titleText"
     titleText = "titleText"
 
-    st  = "subtitleText"
+    st = "subtitleText"
     subtitleText = "subtitleText"
 
-    op  = "options"
+    op = "options"
     options = "options"
 
-    # ===== ESTRUCTURA =====
-    sT  = "showTitle"
+    # STRUCTURE
+    sT = "showTitle"
     showTitle = "showTitle"
 
     sST = "showSubtitle"
     showSubtitle = "showSubtitle"
 
-    # ===== TITLE CONFIG =====
-    tm  = "titleMargins"
+    # TITLE
+    tm = "titleMargins"
     titleMargins = "titleMargins"
 
-    tw  = "titleWidth"
+    tw = "titleWidth"
     titleWidth = "titleWidth"
 
     tcm = "titleColorMargins"
@@ -34,27 +61,27 @@ class I:
     tct = "titleColorText"
     titleColorText = "titleColorText"
 
-    ts  = "titleStyle"
+    ts = "titleStyle"
     titleStyle = "titleStyle"
 
-    # ===== SUBTITLE CONFIG =====
-    sl  = "subtitleLines"
+    # SUBTITLE
+    sl = "subtitleLines"
     subtitleLines = "subtitleLines"
 
-    sw  = "subtitleWidth"
+    sw = "subtitleWidth"
     subtitleWidth = "subtitleWidth"
 
-    sc  = "subtitleColor"
+    sc = "subtitleColor"
     subtitleColor = "subtitleColor"
 
-    ss  = "subtitleStyle"
+    ss = "subtitleStyle"
     subtitleStyle = "subtitleStyle"
 
-    # ===== OPTIONS CONFIG =====
-    k1  = "key1"
+    # OPTIONS
+    k1 = "key1"
     key1 = "key1"
 
-    k2  = "key2"
+    k2 = "key2"
     key2 = "key2"
 
     oct = "optionsColorText"
@@ -63,17 +90,17 @@ class I:
     ock = "optionsColorKeys"
     optionsColorKeys = "optionsColorKeys"
 
-    os  = "optionsStyle"
+    os = "optionsStyle"
     optionsStyle = "optionsStyle"
 
-    # ===== BREAK CONFIG =====
-    sB  = "showBreak"
+    # BREAK
+    sB = "showBreak"
     showBreak = "showBreak"
 
-    bt  = "breakText"
+    bt = "breakText"
     breakText = "breakText"
 
-    bs  = "breakSimbol"
+    bs = "breakSimbol"
     breakSimbol = "breakSimbol"
 
     bct = "breakColorText"
@@ -85,48 +112,98 @@ class I:
     bst = "breakStyle"
     breakStyle = "breakStyle"
 
-    # ===== INPUT CONFIG =====
-    ic  = "inputColor"
+    # INPUT
+    ic = "inputColor"
     inputColor = "inputColor"
 
     isty = "inputStyle"
     inputStyle = "inputStyle"
 
-    p   = "prompt"
+    p = "prompt"
     prompt = "prompt"
 
-# ===== FUNCIONES DE FLUJO =====
+
+# =========================================================
+# UTILITIES
+# =========================================================
 
 line_break = "\n"
 lb = line_break
 
+
 def clear():
+    """
+    Clear terminal screen (cross-platform).
+    """
     os.system('cls' if os.name == 'nt' else 'clear')
 
+
 def pause():
+    """
+    Pause execution until user presses Enter.
+    """
     input(C.b + S.bd + "Press Enter..." + S.rs)
 
 
-# ===== FUNCIONES DE MENU =====
+# =========================================================
+# UI COMPONENTS
+# =========================================================
 
-def title(text="", margins="", numMargins=1,
-          colorMargins=C.r, colorText=C.w, style=S.bd):
+def title(
+    text="",
+    margins="=",
+    width=30,
+    colorMargins=C.r,
+    colorText=C.w,
+    style=S.bd
+):
+    """
+    Render a styled title header.
 
-    line = margins * numMargins
+    🔥 FIX:
+    Now uses real width for proper centering.
+    """
+
+    line = margins * width
+
     print(f"{colorMargins}{style}{line}{S.rs}")
-    print(f"{colorText}{style}{text.center(numMargins)}{S.rs}")
+    print(f"{colorText}{style}{text.center(width)}{S.rs}")
     print(f"{colorMargins}{style}{line}{S.rs}")
 
 
-def subtitle(text="", lines="", numLines=1, numCenter=20,
-             color=C.w, style=S.italic):
+def subtitle(
+    text="",
+    lines="-",
+    numLines=1,
+    width=30,
+    color=C.w,
+    style=S.it
+):
+    """
+    Render a subtitle line.
+    """
 
     line = lines * numLines
-    print(f"{color}{style}{(line + ' ' + text + ' ' + line).center(numCenter)}{S.rs}")
+
+    print(
+        f"{color}{style}"
+        f"{(line + ' ' + text + ' ' + line).center(width)}"
+        f"{S.rs}"
+    )
 
 
-def option(text="", key1="[", key2="]", num=1,
-           colorText=C.w, colorKeys=C.g, style=S.bd):
+def option(
+    text="",
+    key1="[",
+    key2="]",
+    num=1,
+    colorText=C.w,
+    colorKeys=C.g,
+    style=S.bd
+):
+    """
+    Render a menu option line.
+    """
 
     print(
         f"{colorKeys}{style}{key1}{num}{key2}{S.rs} "
@@ -134,8 +211,18 @@ def option(text="", key1="[", key2="]", num=1,
     )
 
 
-def opbreak(text="Salir", key1="[", key2="]", simbol="X",
-            colorText=C.w, colorKeys=C.r, style=S.bd):
+def opbreak(
+    text="Salir",
+    key1="[",
+    key2="]",
+    simbol="X",
+    colorText=C.w,
+    colorKeys=C.r,
+    style=S.bd
+):
+    """
+    Render exit/break option.
+    """
 
     print(
         f"{colorKeys}{style}{key1}{simbol}{key2}{S.rs} "
@@ -143,9 +230,24 @@ def opbreak(text="Salir", key1="[", key2="]", simbol="X",
     )
 
 
-def menu(**kwargs):
+# =========================================================
+# MAIN MENU SYSTEM
+# =========================================================
 
-    # ===== NORMALIZADOR =====
+def menu(**kwargs):
+    """
+    Main interactive menu system.
+
+    🔥 IMPROVED:
+    - Theme auto-application
+    - Input validation
+    - Loop until valid choice
+    """
+
+    # -----------------------------------------------------
+    # ALIAS NORMALIZATION
+    # -----------------------------------------------------
+
     alias_map = {
         "t": "titleText",
         "st": "subtitleText",
@@ -183,12 +285,18 @@ def menu(**kwargs):
         "p": "prompt"
     }
 
-    # convertir claves cortas → largas
-    normalized = {}
-    for k, v in kwargs.items():
-        normalized[alias_map.get(k, k)] = v
+    normalized = {
+        alias_map.get(k, k): v
+        for k, v in kwargs.items()
+    }
 
-    # ===== ahora todo es largo =====
+    # 🔥 NEW: Apply theme automatically
+    normalized = apply_theme(normalized)
+
+    # -----------------------------------------------------
+    # CONFIG VALUES
+    # -----------------------------------------------------
+
     titleText = normalized.get("titleText", "")
     subtitleText = normalized.get("subtitleText", "")
     options = normalized.get("options", [])
@@ -203,12 +311,13 @@ def menu(**kwargs):
     titleStyle = normalized.get("titleStyle", S.bd)
 
     subtitleLines = normalized.get("subtitleLines", "-")
-    subtitleWidth = normalized.get("subtitleWidth", 20)
+    subtitleWidth = normalized.get("subtitleWidth", 30)
     subtitleColor = normalized.get("subtitleColor", C.w)
     subtitleStyle = normalized.get("subtitleStyle", S.it)
 
     key1 = normalized.get("key1", "[")
     key2 = normalized.get("key2", "]")
+
     optionsColorText = normalized.get("optionsColorText", C.w)
     optionsColorKeys = normalized.get("optionsColorKeys", C.g)
     optionsStyle = normalized.get("optionsStyle", S.bd)
@@ -224,21 +333,80 @@ def menu(**kwargs):
     inputStyle = normalized.get("inputStyle", S.bd)
     prompt = normalized.get("prompt", "> ")
 
-    # ===== RENDER =====
-    if showTitle:
-        title(titleText, titleMargins, titleWidth, titleColorMargins, titleColorText, titleStyle)
+    # -----------------------------------------------------
+    # LOOP (🔥 NEW)
+    # -----------------------------------------------------
 
-    if showSubtitle and subtitleText:
-        subtitle(subtitleText, subtitleLines, 3, subtitleWidth, subtitleColor, subtitleStyle)
+    while True:
 
-    print()
+        clear()
 
-    for i, opt in enumerate(options, 1):
-        option(opt, key1, key2, i, optionsColorText, optionsColorKeys, optionsStyle)
+        # RENDER UI
+        if showTitle:
+            title(
+                titleText,
+                titleMargins,
+                titleWidth,
+                titleColorMargins,
+                titleColorText,
+                titleStyle
+            )
 
-    if showBreak:
+        if showSubtitle and subtitleText:
+            subtitle(
+                subtitleText,
+                subtitleLines,
+                3,
+                subtitleWidth,
+                subtitleColor,
+                subtitleStyle
+            )
+
         print()
-        opbreak(breakText, key1, key2, breakSimbol, breakColorText, breakColorKeys, breakStyle)
 
-    choice = input(f"{inputColor}{inputStyle}\n{prompt}{S.rs}")
-    return choice
+        for i, opt in enumerate(options, 1):
+            option(
+                opt,
+                key1,
+                key2,
+                i,
+                optionsColorText,
+                optionsColorKeys,
+                optionsStyle
+            )
+
+        if showBreak:
+            print()
+            opbreak(
+                breakText,
+                key1,
+                key2,
+                breakSimbol,
+                breakColorText,
+                breakColorKeys,
+                breakStyle
+            )
+
+        # -------------------------------------------------
+        # INPUT
+        # -------------------------------------------------
+
+        choice = input(
+            f"{inputColor}{inputStyle}\n{prompt}{S.rs}"
+        )
+
+        # -------------------------------------------------
+        # VALIDATION (🔥 NEW)
+        # -------------------------------------------------
+
+        if showBreak and choice.lower() == breakSimbol.lower():
+            return "break"
+
+        if choice.isdigit():
+            num = int(choice)
+            if 1 <= num <= len(options):
+                return num
+
+        # Error feedback
+        print(C.r + "Invalid option!" + S.rs)
+        pause()

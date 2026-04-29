@@ -1,22 +1,34 @@
-# 🎨 FULLUI - Console UI System
+# 🎨 FULLUI — Console UI System
 
-Librería para crear interfaces de consola avanzadas en Python con:
+> Build beautiful, interactive terminal apps — fast.
 
-* 🎨 Colores ANSI y RGB
-* ✨ Estilos de texto
-* 🧱 Cajas decorativas
-* 🌈 Gradientes de texto
-* 🎮 Sistema de menús totalmente personalizable
-
-Diseñada para:
-
-* Juegos en consola
-* Herramientas CLI
-* Interfaces interactivas
+FULLUI is a powerful and lightweight **console UI framework for Python**, designed to transform boring CLI programs into visually rich experiences.
 
 ---
 
-# 📦 Instalación
+## ✨ Features
+
+* 🎨 ANSI + RGB color system
+* ✨ Text styling (bold, italic, underline, etc.)
+* 🧱 Decorative boxes & layouts
+* 🌈 Gradient text effects
+* 🎮 Flexible menu system (alias-based)
+* ⚡ Smooth CLI animations
+* 🎭 Theme engine (plug & play)
+* 🧠 Clean modular architecture
+
+---
+
+## 🎯 Perfect For
+
+* 🎮 Console games
+* 🧰 CLI tools
+* 🖥️ Interactive terminal apps
+* 🧪 UI prototyping
+
+---
+
+## 📦 Installation
 
 ```bash
 pip install fullui
@@ -24,373 +36,242 @@ pip install fullui
 
 ---
 
-# 🚀 Uso básico
+## 🚀 Quick Start
 
 ```python
 from fullui import *
 
 menu(
-    t="Menu",
-    op=["Jugar", "Salir"]
+    t="Main Menu",
+    op=["Play", "Exit"]
 )
 ```
 
 ---
 
-# 🚀 Importación modular (recomendada)
+## 🧩 Recommended Import Style
 
 ```python
 from fullui.colors import C, S
-from fullui.ui import menu, clear, pause, I
+from fullui.ui import menu, clear, pause
 
-menu(
+clear()
+
+choice = menu(
     t="Menu",
-    op=["Jugar", "Salir"]
+    st="Choose an option",
+    op=["Start", "Exit"]
 )
 
-print(C.r + "Texto en rojo" + S.rs)
+print(C.r + "You selected:" + S.rs, choice)
+pause()
 ```
 
 ---
 
-# 🚀 Todos los módulos disponibles
+## 🧠 Menu Behavior (NEW)
+
+Menus are now **interactive and validated by default**:
+
+* 🔁 Loop until valid input
+* 🔢 Returns selected option as `int`
+* ❌ Handles invalid input automatically
+* 🚪 Returns `"break"` if exit option is used
 
 ```python
-from fullui import (
-    # ===== COLORES =====
-    C, BG, S,
+choice = menu(
+    t="Game",
+    op=["Play", "Settings"]
+)
 
-    # ===== RGB =====
-    rgb, bg_rgb,
+if choice == 1:
+    print("Start game")
+elif choice == "break":
+    print("Exit")
+```
 
-    # ===== HELPERS =====
-    success, error, warning, info, miniTitle,
+---
 
-    # ===== CAJAS =====
-    box1, box2, box3, box4, box5, box6, customBox,
+## 🎨 Themes (Improved)
 
-    # ===== GRADIENTES =====
-    rainbow, blueGra, redGra, customGra,
+Themes are now **automatically applied** — no extra work needed.
 
-    # ===== UI =====
-    I, menu, title, subtitle, option, opbreak,
+```python
+from fullui import set_theme, NEON
 
-    # ===== FLUJO =====
-    clear, pause
+set_theme(NEON)
+
+menu(
+    t="Styled Menu",
+    op=["Option 1", "Option 2"]
 )
 ```
 
----
-
-# 🎨 colors.py
-
-Sistema completo de colores, estilos y utilidades visuales.
-
----
-
-## 🧱 Colores de texto (`C`)
+### Custom Theme
 
 ```python
-C.r  # rojo
-C.g  # verde
-C.b  # azul
-C.y  # amarillo
-C.c  # cyan
-C.w  # blanco
-```
+from fullui import create_theme, C, set_theme
 
-Incluye colores extendidos:
+my_theme = create_theme(
+    titleColor=C.r,
+    inputColor=C.g
+)
 
-* orange
-* pink
-* brown
-* purple
-* dark variants
-
-Uso:
-
-```python
-print(C.r + "Hola" + S.rs)
+set_theme(my_theme)
 ```
 
 ---
 
-## 🎭 Colores de fondo (`BG`)
+## 🎨 Colors & Styles
 
 ```python
-BG.r  # fondo rojo
-BG.b  # fondo azul
+from fullui import C, S
+
+print(C.r + "Red Text" + S.rs)
+print(S.bd + "Bold Text" + S.rs)
+```
+
+### RGB
+
+```python
+from fullui import rgb
+
+print(rgb(255, 100, 0) + "Custom Color")
 ```
 
 ---
 
-## ✨ Estilos (`S`)
+## 🧱 Boxes
 
 ```python
-S.bd  # bold
-S.it  # italic
-S.ul  # underline
-S.rs  # reset
+from fullui import box1, box4
+
+print(box1("Hello"))
+print(box4("Important"))
 ```
 
 ---
 
-## 🎯 Colores RGB
+## 🌈 Gradients
 
 ```python
-rgb(255, 0, 0)
-bg_rgb(0, 0, 255)
+from fullui import rainbow, customGra, C
+
+print(rainbow("FULLUI"))
+print(customGra("Gradient", C.r, C.g, C.b))
 ```
 
 ---
 
-## ⚡ Helpers
+## 🎬 Animations
 
 ```python
-success("OK")
-error("Error")
-warning("Cuidado")
-info("Info")
-miniTitle("Titulo")
+from fullui import spinner, glitch, pulse_bar
+
+spinner("Loading", 3)
+glitch("ERROR", 10)
+pulse_bar(100)
 ```
 
 ---
 
-## 📦 Cajas
+## 🖥️ UI System
 
-```python
-box1("Texto")
-box2("Texto")
-box3("Texto")
-box4("Texto")
-box5("Texto")
-box6("Texto")
+### Aliases
 
-customBox("Texto", "*", C.r)
-```
-
----
-
-## 🌈 Gradientes
-
-```python
-rainbow("Hola")
-blueGra("Texto")
-redGra("Texto")
-
-customGra("Texto", C.r, C.g, C.b)
-```
-
----
-
-# 🖥️ ui.py
-
-Sistema de interfaz para consola totalmente configurable.
-
----
-
-## 🧠 Clase `I` (alias de parámetros)
-
-Permite usar parámetros en formato corto o largo.
-
-```python
-I.t   # titleText
-I.op  # options
-I.k1  # key1
-```
-
-Ejemplo:
+Short keys supported:
 
 ```python
 menu(
-    t="Menu",
-    op=["Jugar", "Salir"]
+    t="Menu",   # titleText
+    st="Info",  # subtitleText
+    op=["A","B"]
 )
 ```
 
 ---
 
-## 🔄 Funciones de flujo
+## 🔧 Utilities
 
 ```python
-clear()  # limpia consola
-pause()  # pausa ejecución
+clear()   # Clear screen
+pause()   # Wait for Enter
 ```
 
 ---
 
-## 🏷️ title()
+## 🧩 Full Import
 
 ```python
-title(
-    text="Titulo",
-    margins="=",
-    numMargins=30
-)
+from fullui import *
 ```
 
----
-
-## 🧾 subtitle()
-
-```python
-subtitle("Subtitulo")
-```
+Everything is exposed via `__all__`.
 
 ---
 
-## 🔢 option()
+# 🆕 Patch Notes — v0.1.2
 
-```python
-option("Jugar", "[", "]", 1)
-```
+### 🔥 Improvements
 
----
+* ✅ **Theme system fully integrated**
 
-## ❌ opbreak()
+  * Themes now apply automatically inside `menu()`
+  * No manual `apply_theme()` needed
 
-```python
-opbreak("Salir", "[", "]", "X")
-```
+* ✅ **Menu system upgraded**
 
----
+  * Input validation added
+  * Infinite loop until valid input
+  * Clean return values (`int` or `"break"`)
 
-# 🎮 menu()
+* ✅ **UI alignment fix**
 
-Función principal del sistema.
+  * `title()` now uses proper width-based centering
+  * More consistent layout rendering
 
-Permite crear menús totalmente personalizables.
+* ✅ **Better UX**
 
----
-
-## 📌 Parámetros
-
-### TEXTOS
-
-* titleText
-* subtitleText
-* options
-
-### ESTRUCTURA
-
-* showTitle
-* showSubtitle
-
-### TITLE
-
-* titleMargins
-* titleWidth
-* titleColorMargins
-* titleColorText
-* titleStyle
-
-### SUBTITLE
-
-* subtitleLines
-* subtitleWidth
-* subtitleColor
-* subtitleStyle
-
-### OPTIONS
-
-* key1
-* key2
-* optionsColorText
-* optionsColorKeys
-* optionsStyle
-
-### BREAK
-
-* showBreak
-* breakText
-* breakSimbol
-* breakColorText
-* breakColorKeys
-* breakStyle
-
-### INPUT
-
-* inputColor
-* inputStyle
-* prompt
+  * Error feedback for invalid inputs
+  * Pause system integrated in validation loop
 
 ---
 
-## 🔥 Ejemplo completo
+### ⚠️ Behavior Changes
 
-```python
-menu(
-    t="ZofA",
-    st="Menu principal",
-    op=["Jugar", "Opciones", "Salir"],
+* `menu()` no longer returns raw input
+* Now returns:
 
-    tm="═",
-    tw=40,
-    tcm=C.p,
-    tct=C.lb,
-
-    k1="⟨",
-    k2="⟩",
-    ock=C.y,
-
-    bt="Salir",
-    bs="0",
-
-    ic=C.g,
-    p=">> "
-)
-```
+  * `int` → valid option
+  * `"break"` → exit
 
 ---
 
-## ⚡ Alias (corto vs largo)
+### 🧠 Internal Improvements
 
-Puedes usar ambos:
-
-```python
-menu(titleText="Menu")
-menu(t="Menu")
-```
-
-Internamente se normalizan automáticamente.
-
----
-
-# 🧩 Características
-
-* 🎨 Colores ANSI + RGB
-* 🧠 Alias inteligente (corto/largo)
-* 🧱 Sistema de cajas
-* 🌈 Gradientes de texto
-* 🎮 Menús configurables
-* ⚡ Fácil integración
-
----
-
-# 🎯 Casos de uso
-
-* Juegos en consola
-* Herramientas CLI
-* Interfaces interactivas
-* Prototipos rápidos
+* Cleaner rendering flow
+* Theme injection system stabilized
+* Better separation of concerns
 
 ---
 
 # 🚀 Roadmap
 
-* Navegación con teclado (↑ ↓)
-* Sistema de temas
-* Soporte multilinea
-* Motor UI avanzado
+* ⌨️ Keyboard navigation (arrow keys)
+* 🧩 Layout system (panels, grids)
+* 🎮 Interactive menus (real-time)
+* 🎨 JSON theme support
+* 🧠 State management system
 
 ---
 
-# 📄 Licencia
+# 📄 License
 
 MIT License
 
 ---
 
-# 👨‍💻 Autor
+# 👨‍💻 Author
 
-Desarrollado como parte del sistema **LeonardX007 UI (LXT)**.
+**Leonardo Farid Porras Bendezú**
+aka **LeonardX007**
