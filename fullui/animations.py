@@ -435,3 +435,168 @@ def glitch(
     _flush(
         f"{color}{style}{text}{S.rs}\n"
     )
+
+# =========================================================
+# NEW ANIMATIONS (v0.2.0)
+# =========================================================
+
+# =========================================================
+# LOADING DOTS
+# =========================================================
+
+def loading_dots(
+    text="Loading",
+    cycles=6,
+    speed=0.4,
+    color=C.c,
+    style=S.bd
+):
+    """
+    Modern loading dots animation (like real apps).
+    """
+
+    dots = ["", ".", "..", "..."]
+
+    for _ in range(cycles):
+        for d in dots:
+            _flush(
+                f"{color}{style}{text}{d}{S.rs}"
+            )
+            time.sleep(speed)
+
+    _reset()
+
+
+# =========================================================
+# PROGRESS FILL
+# =========================================================
+
+def progress_fill(
+    total=100,
+    width=40,
+    speed=0.02,
+    color=C.g,
+    style=S.bd,
+    label="Progress"
+):
+    """
+    Smooth progress bar with percentage.
+    """
+
+    for i in range(total + 1):
+
+        percent = i / total
+        filled = int(width * percent)
+
+        bar = "█" * filled + "░" * (width - filled)
+
+        _flush(
+            f"{color}{style}{label} [{bar}] {int(percent * 100)}%{S.rs}"
+        )
+
+        time.sleep(speed)
+
+    _reset()
+
+
+# =========================================================
+# TYPING
+# =========================================================
+
+def typing(
+    text,
+    speed=0.03,
+    color=C.w,
+    style=S.bd
+):
+    """
+    Realistic typing effect (like ChatGPT style).
+    """
+
+    for ch in text:
+        _flush(
+            f"{color}{style}{ch}{S.rs}"
+        )
+        time.sleep(speed)
+
+    _reset()
+
+
+# =========================================================
+# COUNTDOWN TIMER
+# =========================================================
+
+def countdown(
+    seconds=5,
+    color=C.y,
+    style=S.bd
+):
+    """
+    Simple countdown timer.
+    """
+
+    for i in range(seconds, 0, -1):
+
+        _flush(
+            f"{color}{style}Starting in {i}...{S.rs}"
+        )
+
+        time.sleep(1)
+
+    _flush(f"{color}{style}GO!{S.rs}\n")
+
+
+# =========================================================
+# SUCCESS CHECK ANIMATION
+# =========================================================
+
+def success_check(
+    text="Success",
+    speed=0.1,
+    color=C.g,
+    style=S.bd
+):
+    """
+    Animated success confirmation.
+    """
+
+    frames = ["[ ]", "[✓]", "[✓✓]"]
+
+    for f in frames:
+        _flush(
+            f"{color}{style}{f} {text}{S.rs}"
+        )
+        time.sleep(speed)
+
+    _reset()
+
+
+# =========================================================
+# WAVE LOADING BAR
+# =========================================================
+
+def loading_bar_wave(
+    width=30,
+    cycles=20,
+    speed=0.05,
+    color=C.b,
+    style=S.bd
+):
+    """
+    Animated wave moving inside a loading bar.
+    """
+
+    for i in range(cycles):
+
+        bar = list("-" * width)
+
+        pos = i % width
+        bar[pos] = "█"
+
+        _flush(
+            f"{color}{style}[{''.join(bar)}]{S.rs}"
+        )
+
+        time.sleep(speed)
+
+    _reset()

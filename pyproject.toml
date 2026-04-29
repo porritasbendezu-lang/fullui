@@ -1,14 +1,14 @@
 [build-system]
-requires = ["setuptools>=68.0", "wheel"]
+requires = ["setuptools>=69.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 
 [project]
 name = "fullui"
-version = "0.1.2"
-description = "Advanced console UI framework for Python with colors, animations, themes and interactive menus"
-readme = "README.md"
-requires-python = ">=3.7"
+version = "0.2.0"
+description = "Advanced console UI framework for Python with colors, animations, themes, developer tools and interactive menus"
+readme = {file = "README.md", content-type = "text/markdown"}
+requires-python = ">=3.8"
 
 license = { text = "MIT" }
 
@@ -16,16 +16,34 @@ authors = [
     { name = "Leonardo Farid Porras Bendezu", email = "porritasbendezu@gmail.com" }
 ]
 
-keywords = [
-    "cli", "ui", "console", "terminal",
-    "ansi", "colors", "menus",
-    "tui", "framework", "animations"
+maintainers = [
+    { name = "Leonardo Farid Porras Bendezu", email = "porritasbendezu@gmail.com" }
 ]
 
+keywords = [
+    "cli",
+    "ui",
+    "console",
+    "terminal",
+    "ansi",
+    "colors",
+    "menus",
+    "tui",
+    "framework",
+    "animations",
+    "themes",
+    "developer-tools",
+    "ascii-art",
+    "terminal-games",
+    "interactive-cli"
+]
+
+
 classifiers = [
+    "Development Status :: 4 - Beta",
+
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -39,11 +57,14 @@ classifiers = [
 
     "Intended Audience :: Developers",
     "Intended Audience :: Education",
+    "Intended Audience :: End Users/Desktop",
 
     "Topic :: Software Development :: Libraries",
     "Topic :: Software Development :: User Interfaces",
+    "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Terminals"
 ]
+
 
 dependencies = [
     "colorama>=0.4.6"
@@ -52,13 +73,15 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://github.com/porritasbendezu-lang/fullui"
+Repository = "https://github.com/porritasbendezu-lang/fullui"
 Source = "https://github.com/porritasbendezu-lang/fullui"
 Issues = "https://github.com/porritasbendezu-lang/fullui/issues"
 Documentation = "https://github.com/porritasbendezu-lang/fullui#readme"
+Changelog = "https://github.com/porritasbendezu-lang/fullui/releases"
 
 
 # =========================================================
-# SETUPTOOLS CONFIG
+# SETUPTOOLS
 # =========================================================
 
 [tool.setuptools]
@@ -69,13 +92,29 @@ where = ["."]
 include = ["fullui*"]
 
 
+# Include non-python package files if you add them later
+[tool.setuptools.package-data]
+fullui = [
+    "py.typed"
+]
+
+
 # =========================================================
-# OPTIONAL: DEVELOPMENT CONFIG
+# OPTIONAL DEPENDENCIES
 # =========================================================
 
 [project.optional-dependencies]
+
 dev = [
-    "pytest",
-    "build",
-    "twine"
+    "pytest>=8",
+    "build>=1.2",
+    "twine>=5",
+    "ruff>=0.5"
+]
+
+
+# optional docs extras (future)
+docs = [
+    "mkdocs",
+    "mkdocs-material"
 ]

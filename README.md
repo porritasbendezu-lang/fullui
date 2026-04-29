@@ -6,112 +6,239 @@ FULLUI is a powerful and lightweight **console UI framework for Python**, design
 
 ---
 
-## ✨ Features
+# ✨ Features
 
 * 🎨 ANSI + RGB color system
-* ✨ Text styling (bold, italic, underline, etc.)
+* 🌈 Advanced gradients
+* ✨ Text styling system
 * 🧱 Decorative boxes & layouts
-* 🌈 Gradient text effects
-* 🎮 Flexible menu system (alias-based)
-* ⚡ Smooth CLI animations
-* 🎭 Theme engine (plug & play)
-* 🧠 Clean modular architecture
+* 🎮 Flexible alias-based menu system
+* ⚡ Terminal animations
+* 🎭 Plug & Play Theme Engine
+* 🛠️ Developer Tools Panel *(NEW)*
+* 📦 Registry System *(NEW)*
+* 🎬 Animation Preview System *(NEW)*
+* 🎉 Welcome Banner System *(NEW)*
+* 🧠 Modular architecture
 
 ---
 
-## 🎯 Perfect For
+# 🆕 New in v0.2.0
 
-* 🎮 Console games
-* 🧰 CLI tools
-* 🖥️ Interactive terminal apps
-* 🧪 UI prototyping
+## Added
+
+## 🛠 Developer Tools System
+
+Built-in terminal tools for development:
+
+```python
+from fullui import system_panel
+system_panel()
+```
+
+Includes:
+
+* Themes Manager
+* Color Inspector
+* Animations Preview
+* Registry Inspector
+* System Info Panel
 
 ---
 
-## 📦 Installation
+## 🎭 10 New Themes
+
+```python
+from fullui import set_theme, HACKER
+set_theme(HACKER)
+```
+
+Available themes:
+
+DEFAULT, DARK, NEON, FIRE, ICE
+
+New:
+
+HACKER, VOID, ELECTRIC, NIGHT, ALERT, FROST, NATURE, DEV, GAMER, BRUTAL
+
+---
+
+## 🎬 New Animations
+
+```python
+from fullui import *
+
+loading_dots()
+progress_fill()
+typing("Hello World")
+countdown()
+success_check()
+loading_bar_wave()
+```
+
+New effects:
+
+* loading_dots()
+* progress_fill()
+* typing()
+* countdown()
+* success_check()
+* loading_bar_wave()
+
+---
+
+## 🎨 Expanded Color System
+
+```python
+C.gold
+C.neon_green
+C.electric_blue
+C.fire_orange
+C.deep_pink
+C.wine
+```
+
+RGB:
+
+```python
+print(rgb(255,120,0)+"Hello")
+```
+
+---
+
+## 📦 Registry System
+
+```python
+register_theme("mytheme", my_theme)
+
+register_color(
+    "danger",
+    rgb(255,0,0)
+)
+
+register_animation(
+    "shake",
+    my_animation
+)
+```
+
+---
+
+# 🎯 Perfect For
+
+* Console games
+* CLI tools
+* Interactive terminal apps
+* UI prototyping
+* Terminal dashboards
+
+---
+
+# 📦 Installation
 
 ```bash
 pip install fullui
 ```
 
+## ✨ Verify Installation (Optional)
+
+Show FULLUI welcome banner after install:
+
+```bash
+pip install fullui
+python -c "import fullui; fullui.banner()"
+```
+
+Example:
+
+```python
+import fullui
+fullui.banner()
+```
+
+Displays:
+
+```text
+███████╗██╗   ██╗██╗     ██╗     ██╗   ██╗██╗
+...
+
+🎨 FULLUI v0.2.0
+Advanced Console UI Framework
+✔ Installed successfully
+```
+
 ---
 
-## 🚀 Quick Start
+# 🚀 Quick Start
 
 ```python
 from fullui import *
 
+banner()
+
 menu(
     t="Main Menu",
-    op=["Play", "Exit"]
+    op=[
+        "Play",
+        "Settings"
+    ]
 )
 ```
 
 ---
 
-## 🧩 Recommended Import Style
+# 🧩 Recommended Import Style
 
 ```python
 from fullui.colors import C, S
-from fullui.ui import menu, clear, pause
-
-clear()
+from fullui.ui import menu
 
 choice = menu(
     t="Menu",
-    st="Choose an option",
-    op=["Start", "Exit"]
+    st="Choose",
+    op=["Start","Exit"]
 )
-
-print(C.r + "You selected:" + S.rs, choice)
-pause()
 ```
 
 ---
 
-## 🧠 Menu Behavior (NEW)
+# 🧠 Menu Behavior
 
-Menus are now **interactive and validated by default**:
-
-* 🔁 Loop until valid input
-* 🔢 Returns selected option as `int`
-* ❌ Handles invalid input automatically
-* 🚪 Returns `"break"` if exit option is used
+* Loops until valid input
+* Returns int
+* Invalid input handled automatically
+* Returns None on exit
 
 ```python
 choice = menu(
     t="Game",
-    op=["Play", "Settings"]
+    op=["Play","Settings"]
 )
 
 if choice == 1:
-    print("Start game")
-elif choice == "break":
+    print("Play")
+elif choice is None:
     print("Exit")
 ```
 
 ---
 
-## 🎨 Themes (Improved)
-
-Themes are now **automatically applied** — no extra work needed.
+# 🎨 Themes
 
 ```python
-from fullui import set_theme, NEON
+from fullui import *
 
 set_theme(NEON)
 
 menu(
-    t="Styled Menu",
-    op=["Option 1", "Option 2"]
+ t="Styled Menu",
+ op=["Option A","Option B"]
 )
 ```
 
-### Custom Theme
+Custom:
 
 ```python
-from fullui import create_theme, C, set_theme
-
 my_theme = create_theme(
     titleColor=C.r,
     inputColor=C.g
@@ -122,146 +249,201 @@ set_theme(my_theme)
 
 ---
 
-## 🎨 Colors & Styles
+# 🎨 Colors & Styles
 
 ```python
-from fullui import C, S
-
-print(C.r + "Red Text" + S.rs)
-print(S.bd + "Bold Text" + S.rs)
-```
-
-### RGB
-
-```python
-from fullui import rgb
-
-print(rgb(255, 100, 0) + "Custom Color")
+print(C.r+"Red"+S.rs)
+print(S.bd+"Bold"+S.rs)
 ```
 
 ---
 
-## 🧱 Boxes
+# 🧱 Boxes
 
 ```python
-from fullui import box1, box4
-
 print(box1("Hello"))
-print(box4("Important"))
+print(box4("Warning"))
 ```
 
 ---
 
-## 🌈 Gradients
+# 🌈 Gradients
 
 ```python
-from fullui import rainbow, customGra, C
-
 print(rainbow("FULLUI"))
-print(customGra("Gradient", C.r, C.g, C.b))
-```
 
----
-
-## 🎬 Animations
-
-```python
-from fullui import spinner, glitch, pulse_bar
-
-spinner("Loading", 3)
-glitch("ERROR", 10)
-pulse_bar(100)
-```
-
----
-
-## 🖥️ UI System
-
-### Aliases
-
-Short keys supported:
-
-```python
-menu(
-    t="Menu",   # titleText
-    st="Info",  # subtitleText
-    op=["A","B"]
+print(
+ customGra(
+   "Gradient",
+   C.r,
+   C.g,
+   C.b
+ )
 )
 ```
 
 ---
 
-## 🔧 Utilities
+# 🎬 Animations
 
 ```python
-clear()   # Clear screen
-pause()   # Wait for Enter
+spinner()
+glitch("ERROR")
+progress_fill()
+loading_dots()
 ```
 
 ---
 
-## 🧩 Full Import
+# 🖥 UI Alias System
+
+```python
+menu(
+ t="Menu",
+ st="Info",
+ op=["A","B"]
+)
+```
+
+Aliases:
+
+t, st, op, bs, etc.
+
+---
+
+# 🔧 Utilities
+
+```python
+clear()
+pause()
+```
+
+---
+
+# 🧩 Full Import
 
 ```python
 from fullui import *
 ```
 
-Everything is exposed via `__all__`.
+Everything exposed through **all**.
 
 ---
 
-# 🆕 Patch Notes — v0.1.2
+# 🆕 Patch Notes — v0.2.0
 
-### 🔥 Improvements
+## Major Features Added
 
-* ✅ **Theme system fully integrated**
+## Developer Tools Suite
 
-  * Themes now apply automatically inside `menu()`
-  * No manual `apply_theme()` needed
+Added:
 
-* ✅ **Menu system upgraded**
-
-  * Input validation added
-  * Infinite loop until valid input
-  * Clean return values (`int` or `"break"`)
-
-* ✅ **UI alignment fix**
-
-  * `title()` now uses proper width-based centering
-  * More consistent layout rendering
-
-* ✅ **Better UX**
-
-  * Error feedback for invalid inputs
-  * Pause system integrated in validation loop
+* system_panel()
+* themes_manager()
+* animations_preview()
+* system_info()
+* registry_inspector()
 
 ---
 
-### ⚠️ Behavior Changes
+## Theme Engine Expanded
 
-* `menu()` no longer returns raw input
-* Now returns:
+Added 10 new themes plus:
 
-  * `int` → valid option
-  * `"break"` → exit
+* titleColorMargins
+* break key theming
+* theme previews
+* theme manager UI
 
 ---
 
-### 🧠 Internal Improvements
+## Animation Expansion
 
-* Cleaner rendering flow
-* Theme injection system stabilized
-* Better separation of concerns
+Added:
+
+* loading_dots
+* progress_fill
+* typing
+* countdown
+* success_check
+* loading_bar_wave
+
+---
+
+## Registry System Added
+
+Supports:
+
+* register_theme()
+* register_color()
+* register_animation()
+
+---
+
+## Welcome Banner Added
+
+Added:
+
+* banner()
+* about() alias
+
+Quick verification:
+
+```bash
+python -c "import fullui; fullui.banner()"
+```
+
+---
+
+## Color System Expanded
+
+Added:
+
+* Gold
+* Lime
+* Neon Green
+* Electric Blue
+* Fire Orange
+* Deep Pink
+* Wine
+* Steel Gray
+
+---
+
+## Improvements
+
+* breakSimbol typo fixed -> breakSymbol
+* Improved clear screen behavior
+* Better title rendering
+* Better theme contrast
+* Improved menu exit behavior
+
+---
+
+## Behavior Changes
+
+menu() exit now returns:
+
+```python
+None
+```
+
+instead of:
+
+```python
+"break"
+```
 
 ---
 
 # 🚀 Roadmap
 
-* ⌨️ Keyboard navigation (arrow keys)
-* 🧩 Layout system (panels, grids)
-* 🎮 Interactive menus (real-time)
-* 🎨 JSON theme support
-* 🧠 State management system
+* Keyboard navigation
+* Panel layouts
+* Real-time menus
+* JSON themes
+* State management
+* Mouse terminal support
 
 ---
 

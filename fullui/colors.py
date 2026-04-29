@@ -10,6 +10,10 @@ for terminal UI applications.
 # TEXT COLORS
 # =========================================================
 
+# =========================================================
+# TEXT COLORS
+# =========================================================
+
 class C:
     """
     Foreground (text) ANSI colors.
@@ -26,6 +30,7 @@ class C:
 
     orange = "\033[38;5;208m"
     pink   = "\033[38;5;213m"
+    wine = "\033[38;2;120;0;40m"
 
     gray       = "\033[90m"
     dark_green = "\033[38;2;0;100;0m"
@@ -34,6 +39,21 @@ class C:
     dark_cyan  = "\033[38;2;0;139;139m"
     purple     = "\033[38;2;128;0;128m"
     brown      = "\033[38;2;139;69;19m"
+
+    # =====================================================
+    # NEW COLORS (v0.2.0)
+    # =====================================================
+
+    gold          = "\033[38;2;212;175;55m"
+    lime          = "\033[38;2;50;255;80m"
+    neon_green    = "\033[38;2;0;255;120m"
+    electric_blue = "\033[38;2;0;180;255m"
+    neon_purple   = "\033[38;2;180;0;255m"
+    fire_orange   = "\033[38;2;255;120;0m"
+    soft_black    = "\033[38;2;20;20;20m"
+    bright_cyan   = "\033[38;2;0;255;255m"
+    deep_pink     = "\033[38;2;255;20;147m"
+    steel_gray    = "\033[38;2;100;100;110m"
 
     # aliases (shortcuts)
     k = black
@@ -46,6 +66,18 @@ class C:
     w = white
     o = orange
     p = pink
+    wn = wine
+
+    gd = gold
+    ln = lime
+    ng = neon_green
+    eb = electric_blue
+    np = neon_purple
+    fo = fire_orange
+    sb = soft_black
+    bc = bright_cyan
+    dp = deep_pink
+    sg = steel_gray
 
     gr = gray
     dg = dark_green
@@ -74,9 +106,6 @@ class BG:
     cyan    = "\033[46m"
     white   = "\033[47m"
 
-    # NOTE:
-    # Extended colors must use 48;2 for background (not 38;2)
-
     orange = "\033[48;5;208m"
     pink   = "\033[48;5;213m"
 
@@ -87,6 +116,21 @@ class BG:
     dark_cyan  = "\033[48;2;0;139;139m"
     purple     = "\033[48;2;128;0;128m"
     brown      = "\033[48;2;139;69;19m"
+
+    # =====================================================
+    # NEW BACKGROUND COLORS (v0.2.0)
+    # =====================================================
+
+    gold          = "\033[48;2;212;175;55m"
+    lime          = "\033[48;2;50;255;80m"
+    neon_green    = "\033[48;2;0;255;120m"
+    electric_blue = "\033[48;2;0;180;255m"
+    neon_purple   = "\033[48;2;180;0;255m"
+    fire_orange   = "\033[48;2;255;120;0m"
+    soft_black    = "\033[48;2;20;20;20m"
+    bright_cyan   = "\033[48;2;0;255;255m"
+    deep_pink     = "\033[48;2;255;20;147m"
+    steel_gray    = "\033[48;2;100;100;110m"
 
     # aliases
     k = black
