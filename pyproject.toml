@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fullui"
-version = "0.2.2"
+version = "0.2.3"
 
 description = "Advanced console UI framework for Python with colors, layouts, animations, themes, developer tools and interactive menus"
 
@@ -32,6 +32,8 @@ keywords = [
 "ansi",
 "colors",
 "menus",
+"books",
+"quizzes",
 "tui",
 "framework",
 "animations",

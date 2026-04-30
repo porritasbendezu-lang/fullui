@@ -3,28 +3,22 @@ ui.py
 
 Core interface system for FULLUI.
 
-Provides:
-- Console menus
-- Titles and subtitles
-- Options rendering
-- Input handling
-- Improved CLI flow utilities (validation + loop)
-
-v0.2.0 ADDITIONS:
-- System Panel (Developer Tools)
-- Theme / Color / Animation Inspectors
-- Registry System (extensibility)
-- System Info Panel
+v0.2.3 ADDITIONS:
+- Book System
+- Quiz System
+- Add functions to colors.py and more
 """
 
 # =========================================================
 # IMPORTS
 # =========================================================
 
+from fullui import *
 from .colors import C, S, BG
 from .themes import apply_theme, get_theme, set_theme
+from .layouts import Panel, stack
+import textwrap
 import os
-import time
 
 # =========================================================
 # INTERNAL REGISTRY (v0.2.0)
@@ -40,8 +34,11 @@ _ANIMATION_REGISTRY = {}
 
 class I:
     """
-    Alias registry for menu parameters.
+    Alias registry for FULLUI.
+    Organized by system: Menu / Input / Quiz
     """
+
+    # =============== MENU TEXT ===============
 
     t = "titleText"
     titleText = "titleText"
@@ -52,11 +49,18 @@ class I:
     op = "options"
     options = "options"
 
+    # =============== MENU VISIBILITY ===============
+
     sT = "showTitle"
     showTitle = "showTitle"
 
     sST = "showSubtitle"
     showSubtitle = "showSubtitle"
+
+    sB = "showBreak"
+    showBreak = "showBreak"
+
+    # =============== MENU TITLE STYLE ===============
 
     tm = "titleMargins"
     titleMargins = "titleMargins"
@@ -73,6 +77,8 @@ class I:
     ts = "titleStyle"
     titleStyle = "titleStyle"
 
+    # =============== MENU SUBTITLE ===============
+
     sl = "subtitleLines"
     subtitleLines = "subtitleLines"
 
@@ -84,6 +90,8 @@ class I:
 
     ss = "subtitleStyle"
     subtitleStyle = "subtitleStyle"
+
+    # =============== MENU OPTIONS ===============
 
     k1 = "key1"
     key1 = "key1"
@@ -100,13 +108,11 @@ class I:
     os = "optionsStyle"
     optionsStyle = "optionsStyle"
 
-    sB = "showBreak"
-    showBreak = "showBreak"
+    # =============== MENU BREAK ===============
 
     bt = "breakText"
     breakText = "breakText"
 
-    #FIX: typo corregido
     bs = "breakSymbol"
     breakSymbol = "breakSymbol"
 
@@ -119,6 +125,8 @@ class I:
     bst = "breakStyle"
     breakStyle = "breakStyle"
 
+    # =============== INPUT ===============
+
     ic = "inputColor"
     inputColor = "inputColor"
 
@@ -127,12 +135,47 @@ class I:
 
     p = "prompt"
     prompt = "prompt"
-    
+
     io = "invalidOption"
     invalidOption = "invalidOption"
-    
+
     ioc = "invalidOptionColor"
     invalidOptionColor = "invalidOptionColor"
+
+    # =============== QUIZ CORE ===============
+
+    qs = "questions"
+    questions = "questions"
+
+    # =============== QUIZ TEXTS ===============
+
+    twn = "textWin"
+    textWin = "textWin"
+
+    tf = "textFail"
+    textFail = "textFail"
+
+    tmid = "textMid"
+    textMid = "textMid"
+
+    # =============== QUIZ ===============
+
+    qc = "questionColor"
+    questionColor = "questionColor"
+
+    qsty = "questionStyle"
+    questionStyle = "questionStyle"
+
+    okl = "optionKeyLeft"
+    optionKeyLeft = "optionKeyLeft"
+
+    okr = "optionKeyRight"
+    optionKeyRight = "optionKeyRight"
+
+    # reutiliza colores del sistema base
+
+    rc = "resultColor"
+    resultColor = "resultColor"
 
 # =========================================================
 # UTILITIES
@@ -141,11 +184,65 @@ class I:
 line_break = "\n"
 lb = line_break
 
+def p(text):
+    print(text)
+
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def pause(text="", colorText=C.m, style=S.bd):
+def pause(text="Press Enter for continue ...", colorText=C.m, style=S.bd):
     input(f"{colorText}{style}{text}{S.rs}")
+
+# =========================================================
+# HELPERS
+# =========================================================
+
+def success(text):
+    """
+    Success message style (green).
+    """
+    print(f"{C.g}{S.bd}✔︎  {text}{S.rs}")
+
+
+def error(text):
+    """
+    Error message style (red bold).
+    """
+    print(f"{C.r}{S.bd}✖︎  {text}{S.rs}")
+
+
+def warning(text):
+    """
+    Warning message style (yellow).
+    """
+    print(f"{C.y}{S.bd}⚠︎  {text}{S.rs}")
+
+
+def info(text):
+    """
+    Info message style (black).
+    """
+    print(f"{C.k}{S.bd}🖥  {text}{S.rs}")
+
+def message(text, line, width=20, colorMessage = C.c, style = S.bd):
+    """
+    Text message style (cyan) with automatic line wrapping.
+    """
+    lineUp = line*(width//2)
+    lineDown = (line*width) + line*4
+    print(f"{colorMessage}{style}{lineUp} ✉︎  {lineUp}{S.rs}".center(width))
+    wrapped = textwrap.fill(text, width=width)
+
+    for line in wrapped.split("\n"):
+        print(f"{C.w}{line}{S.rs}".center(width))
+    
+    print(f"{colorMessage}{style}{lineDown}{S.rs}".center(width))
+
+def miniTitle(text, color = C.m, style = S.bd):
+    """
+    Small styled title header.
+    """
+    print(f"{color}{style}=====》 {text} 《====={S.rs}")
 
 # =========================================================
 # UI COMPONENTS
@@ -180,7 +277,7 @@ def register_animation(name, func):
     _ANIMATION_REGISTRY[name] = func
 
 # =========================================================
-# SYSTEM PANEL (DEV TOOL - PRO)
+# SYSTEM PANEL (DEV TOOL)
 # =========================================================
 
 def system_panel():
@@ -224,19 +321,29 @@ def themes_manager():
     from .themes import (
         DEFAULT, DARK, NEON, FIRE, ICE,
         HACKER, VOID, ELECTRIC, NIGHT,
-        ALERT, FROST, NATURE, DEV, GAMER, BRUTAL
+        ALERT, FROST, NATURE, DEV, GAMER, BRUTAL,
+        SUNSET, OCEAN, FOREST, CYBERPUNK, LAVENDER,
+        GOLD, ROSE, MIDNIGHT, EMBER, MINT,
+        CRIMSON_GOLD, AQUA_LIME, PURPLE_PINK, 
+        BLUE_ORANGE, EMERALD_GOLD, RED_BLACK, SKY_PURPLE, 
+        MANGO_FIRE, TEAL_ROSE, INDIGO_CYAN
     )
 
     themes = [
         DEFAULT, DARK, NEON, FIRE, ICE,
         HACKER, VOID, ELECTRIC, NIGHT,
-        ALERT, FROST, NATURE, DEV, GAMER, BRUTAL
+        ALERT, FROST, NATURE, DEV, GAMER, BRUTAL,
+        SUNSET, OCEAN, FOREST, CYBERPUNK, LAVENDER,
+        GOLD, ROSE, MIDNIGHT, EMBER, MINT,
+        CRIMSON_GOLD, AQUA_LIME, PURPLE_PINK, 
+        BLUE_ORANGE, EMERALD_GOLD, RED_BLACK, SKY_PURPLE, 
+        MANGO_FIRE, TEAL_ROSE, INDIGO_CYAN
     ] + list(_THEME_REGISTRY.values())
 
     while True:
-        # ===============================
-        # MENU DE TEMAS
-        # ===============================
+        
+        # =============== THEMES MENU ===============
+
         choice = menu(
             t="THEMES MANAGER",
             st=f"Active: {get_theme().name}",
@@ -250,9 +357,8 @@ def themes_manager():
 
         selected = themes[choice - 1]
 
-        # ===============================
-        # PREVIEW VISUAL
-        # ===============================
+        # =============== PREVIEW THEMES ===============
+
         while True:
             preview_choice = menu(
                 t="THEME PREVIEW",
@@ -264,7 +370,7 @@ def themes_manager():
                 bt="Back",
                 bs="X",
 
-                # 🔥 AQUÍ FORZAMOS ESTILO DEL THEME
+                # AQUÍ FORZAMOS ESTILO DEL THEME
                 tcm=selected.titleColorMargins,
                 tct=selected.titleColor,
                 ts=selected.titleStyle,
@@ -347,7 +453,7 @@ def animations_preview():
                 pause()
 
 # =========================================================
-# COLORS INSPECTOR
+# COLOR INSPECTOR
 # =========================================================
 
 def show_colors():
@@ -415,6 +521,60 @@ def system_info():
     pause()
 
 # =========================================================
+# BOOK VIEWER
+# =========================================================
+
+def book(pages, width=60):
+    """
+    Interactive book viewer (1 page)
+
+    Controls:
+    A -> previous
+    D -> next
+    X -> exit
+
+    pages: list[str]
+    """
+
+    if not pages:
+        return
+
+    index = 0
+
+    while True:
+        clear()
+
+        # =============== CURRENT PAGE ===============
+        content = pages[index]
+
+        panel = Panel(
+            content,
+            w=width,
+            b="round",
+            t=f"Page {index + 1}/{len(pages)}",
+            a="left"
+        )
+
+        panel.show()
+
+        print()
+        print(f"{C.g}[A]{S.rs} Previous   {C.y}[D]{S.rs} Next   {C.r}[X]{S.rs} Exit")
+
+        # =============== INPUT ===============
+        choice = input(f"{C.c}{S.bd}\n> {S.rs}").lower()
+
+        if choice == "x":
+            break
+
+        elif choice == "a":
+            if index > 0:
+                index -= 1
+
+        elif choice == "d":
+            if index < len(pages) - 1:
+                index += 1
+                
+# =========================================================
 # MAIN MENU
 # =========================================================
 
@@ -463,9 +623,7 @@ def menu(**kwargs):
         options = normalized.get("options", [])
         breakSymbol = normalized.get("breakSymbol", "X")
 
-        # =====================================================
-        # TITLE (🔥 FIXED)
-        # =====================================================
+        # =============== TITLE ===============
 
         if normalized.get("showTitle", True):
             title(
@@ -477,9 +635,7 @@ def menu(**kwargs):
                 normalized.get("titleStyle", S.bd)
             )
 
-        # =====================================================
-        # SUBTITLE
-        # =====================================================
+        # =============== SUBTITLE ===============
 
         if normalized.get("showSubtitle", True) and normalized.get("subtitleText"):
             subtitle(
@@ -493,9 +649,7 @@ def menu(**kwargs):
 
         print()
 
-        # =====================================================
-        # OPTIONS
-        # =====================================================
+        # =============== OPTIONS ===============
 
         for i, opt in enumerate(options, 1):
             option(
@@ -508,9 +662,7 @@ def menu(**kwargs):
                 normalized.get("optionsStyle", S.bd)
             )
 
-        # =====================================================
-        # BREAK (🔥 YA SOPORTA THEME)
-        # =====================================================
+        # =============== BREAK ===============
 
         if normalized.get("showBreak", True):
             print()
@@ -524,9 +676,7 @@ def menu(**kwargs):
                 normalized.get("breakStyle", S.bd)
             )
 
-        # =====================================================
-        # INPUT
-        # =====================================================
+        # =============== INPUT ===============
 
         choice = input(
             f"{normalized.get('inputColor', C.c)}"
@@ -547,3 +697,185 @@ def menu(**kwargs):
             f"{normalized.get('invalidOption', "Opcion incorrecta")}{S.rs}"
             )
         pause()
+
+# =========================================================
+# MAIN QUIZ UI
+# =========================================================
+
+def quiz_title(text="", margins="=", width=30, colorMargins=C.r, colorText=C.w, style=S.bd):
+    line = margins * width
+    print(f"{colorText}{style}{text.center(width)}{S.rs}")
+    print(f"{colorMargins}{style}{line}{S.rs}")
+
+def quiz_question(text, color=C.w, style=S.bd):
+    print(f"\n{color}{style}{text}{S.rs}\n")
+
+def quiz_option(text, num, keyL="(", keyR=")", colorKey=C.y, colorText=C.w, style=S.bd):
+    print(f"{colorKey}{style}{keyL}{num}{keyR}{S.rs} {colorText}{text}{S.rs}")
+
+
+# =========================================================
+# QUIZ
+# =========================================================
+
+def quiz(**kwargs):
+
+    theme = get_theme()
+    
+    alias_map = {
+        "t": "titleText",
+        "tm": "titleMargins",
+        "tw": "titleWidth",
+        "tcm": "titleColorMargins",
+        "tct": "titleColorText",
+        "ts": "titleStyle",
+        "qs": "question",
+
+        "tw": "textWin",
+        "tf": "textFail",
+        "tmid": "textMid",
+
+        "qc": "questionColor",
+        "qsty": "questionStyle",
+
+        "okl": "optionKeyLeft",
+        "okr": "optionKeyRight",
+
+        "ock": "optionColorKeys",
+        "oct": "optionColorText",
+        "os": "optionStyle",
+
+        "ic": "inputColor",
+        "isty": "inputStyle",
+        "p": "prompt",
+
+        "rc": "resultColor"
+    }
+
+    normalized = {alias_map.get(k, k): v for k, v in kwargs.items()}
+    normalized = apply_theme(normalized)
+
+    question = normalized.get("question", [])
+
+    results = []
+    score = 0
+
+    # =============== QUESTIONS LOOP ===============
+
+    for idx, q in enumerate(question, 1):
+
+        while True:
+            clear()
+
+            if normalized.get("showTitle", True):
+                quiz_title(
+                    normalized.get("titleText", ""),
+                    normalized.get("titleMargins", "="),
+                    normalized.get("titleWidth", 30),
+                    normalized.get("titleColorMargins", C.r),
+                    normalized.get("titleColorText", C.w),
+                    normalized.get("titleStyle", S.bd)
+                )
+
+            print(f"{theme.titleColorMargins}Pregunta {idx}/{len(question)}{S.rs}")
+
+            quiz_question(
+                q["question"],
+                color=normalized.get("questionColor", theme.subtitleColor)
+            )
+
+            for i, opt in enumerate(q["options"], 1):
+                quiz_option(
+                    opt,
+                    i,
+                    normalized.get("optionKeyLeft", "("),
+                    normalized.get("optionKeyRight", ")"),
+                    normalized.get("optionColorKeys", theme.optionKeyColor),
+                    normalized.get("optionColorText", theme.optionColor),
+                    normalized.get("optionStyle", theme.optionStyle)
+                )
+
+            choice = input(
+                f"{normalized.get('inputColor', C.c)}"
+                f"{normalized.get('inputStyle', S.bd)}\n"
+                f"{normalized.get('prompt', '> ')}{S.rs}"
+            )
+
+            if choice.isdigit():
+                n = int(choice)
+
+                if 1 <= n <= len(q["options"]):
+                    correct = (n == q["correct"])
+
+                    if correct:
+                        score += 1
+
+                    results.append({
+                        "question": q["question"],
+                        "options": q["options"],
+                        "selected": n,
+                        "correct": q["correct"]
+                    })
+
+                    break
+
+            print(lb + f"{C.r}Opción inválida{S.rs}" + lb)
+            pause()
+
+    # =============== RESULTS ===============
+
+    clear()
+
+    panels = []
+
+    for idx, r in enumerate(results, 1):
+
+        lines = []
+
+        for i, opt in enumerate(r["options"], 1):
+            if i == r["selected"]:
+                if i == r["correct"]:
+                    lines.append(f"{BG.g}{C.w} {opt} {S.rs} ✔")
+                else:
+                    lines.append(f"{BG.r}{C.w} {opt} {S.rs} ✖")
+            else:
+                if i == r["correct"]:
+                    lines.append(f"{C.g}{opt} ✔{S.rs}")
+                else:
+                    lines.append(opt)
+
+        content = f"{r['question']}\n\n" + "\n".join(lines)
+
+        panels.append(
+            Panel(
+                content,
+                w=60,
+                b="round",
+                t=f"Pregunta {idx}",
+                a="left"
+            )
+        )
+
+    total = len(question)
+    percent = int((score / total) * 100)
+
+    if score == total:
+        msg = f"{C.g}{normalized.get('textWin', 'Perfecto')}{S.rs}"
+    elif score == 0:
+        msg = f"{C.r}{normalized.get('textFail', 'Fallaste todo')}{S.rs}"
+    else:
+        msg = f"{C.y}{normalized.get('textMid', 'Resultado intermedio')}{S.rs}"
+
+    score_panel = Panel(
+        f"Puntaje: {score}/{total} ({percent}%)\n\n{msg}",
+        w=60,
+        b="double",
+        t="RESULTADO FINAL",
+        a="center"
+    )
+
+    stack(*panels)
+    print()
+    score_panel.show()
+
+    pause()

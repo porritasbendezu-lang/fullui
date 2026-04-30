@@ -14,12 +14,13 @@ experiences.
 -   🌈 Advanced gradients
 -   ✨ Text styling system
 -   🧱 Decorative boxes
--   🪟 Layout System
--   🎮 Flexible alias-based menu system
+-   📝 Layout System
+-   🎮 Flexible alias-based system
 -   ⚡ Terminal animations
 -   🎭 Plug & Play Theme Engine
 -   🛠 Developer Tools Panel
 -   📦 Modular architecture
+-   ✅ 100% editable interfaces 
 
 ------------------------------------------------------------------------
 
@@ -27,11 +28,11 @@ experiences.
 
 ## Improvements & Refinements
 
--   Improved UI rendering performance
--   Better theme handling
--   Cleaner module structure
+-   Fixed some problems
+-   Functions arranged in scripts
+-   More flexible custom color gradients
 -   Internal optimizations
--   Preparation for future widgets system
+-   Functions implemented to create books and quizzes
 
 ------------------------------------------------------------------------
 
@@ -120,6 +121,61 @@ elif choice is None:
 
 ------------------------------------------------------------------------
 
+# 🧠 Book Behavior
+
+-   Pages interactive for commands
+-   Long texts
+-   Layout system
+
+``` python
+choice = book(
+    pages = [
+        "TEXT1"
+        "TEXT2"
+        "TEXT3"
+    ]
+    width= 60 
+)
+```
+
+------------------------------------------------------------------------
+
+# 🧠 Quiz Behavior
+
+-   Multiples uestions
+-   Correct answer system
+-   Result layout
+
+``` python
+quiz(
+    t="QUIZ",
+    
+    qs=[
+        {
+            "question": "¿...?",
+            "options": ["A", "B", "C"],
+            "correct": 2
+        },
+        {
+            "question": "¿?",
+            "options": ["1", "2", "3"],
+            "correct": 2
+        },
+        {
+            "question": "¿?",
+            "options": ["@", "#", "&"],
+            "correct": 1
+        }
+    ],
+
+    twn="¡Wonderfull!",
+    tf="Fail",
+    tmid="no bad"
+)
+```
+
+------------------------------------------------------------------------
+
 # 🎨 Themes
 
 ``` python
@@ -146,7 +202,7 @@ set_theme(my_theme)
 
 ------------------------------------------------------------------------
 
-# 🪟 Layout System
+# 📝 Layout System
 
 ## Panel
 
@@ -228,8 +284,12 @@ t, st, op, bs...
 # 🔧 Utilities
 
 ``` python
-clear()
-pause()
+line_break # is "\n"
+lb = line_break
+
+p() #Print
+clear() #Clear Console
+pause() #Input pause
 ```
 
 ------------------------------------------------------------------------

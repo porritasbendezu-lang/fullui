@@ -9,6 +9,10 @@ Allows customization of UI appearance such as:
 - text behavior
 
 Designed to be lightweight and easily extendable.
+
+v0.2.3 ADDITIONS:
+- Fix parameters
+- New themes RGB
 """
 
 # =========================================================
@@ -543,27 +547,23 @@ def apply_theme(menu_kwargs: dict, theme: Theme = None):
     theme = theme or _current_theme
 
     # TITLE
-    menu_kwargs.setdefault("titleColorText", theme.titleColor)
-    menu_kwargs.setdefault("titleStyle", theme.titleStyle)
-    menu_kwargs.setdefault("titleColorMargins", theme.titleColorMargins)
+    menu_kwargs["titleColorText"] = theme.titleColor
+    menu_kwargs["titleStyle"] = theme.titleStyle
+    menu_kwargs["titleColorMargins"] = theme.titleColorMargins
 
-    # SUBTITLE
-    menu_kwargs.setdefault("subtitleColor", theme.subtitleColor)
-    menu_kwargs.setdefault("subtitleStyle", theme.subtitleStyle)
+    menu_kwargs["subtitleColor"] = theme.subtitleColor
+    menu_kwargs["subtitleStyle"] = theme.subtitleStyle
 
-    # OPTIONS
-    menu_kwargs.setdefault("optionsColorText", theme.optionColor)
-    menu_kwargs.setdefault("optionsColorKeys", theme.optionKeyColor)
-    menu_kwargs.setdefault("optionsStyle", theme.optionStyle)
+    menu_kwargs["optionsColorText"] = theme.optionColor
+    menu_kwargs["optionsColorKeys"] = theme.optionKeyColor
+    menu_kwargs["optionsStyle"] = theme.optionStyle
 
-    # BREAK
-    menu_kwargs.setdefault("breakColorText", theme.breakColor)
-    menu_kwargs.setdefault("breakColorKeys", theme.breakKeyColor)  # 🔥 FIX
-    menu_kwargs.setdefault("breakStyle", theme.breakStyle)
+    menu_kwargs["breakColorText"] = theme.breakColor
+    menu_kwargs["breakColorKeys"] = theme.breakKeyColor
+    menu_kwargs["breakStyle"] = theme.breakStyle
 
-    # INPUT
-    menu_kwargs.setdefault("inputColor", theme.inputColor)
-    menu_kwargs.setdefault("inputStyle", theme.inputStyle)
+    menu_kwargs["inputColor"] = theme.inputColor
+    menu_kwargs["inputStyle"] = theme.inputStyle
 
     return menu_kwargs
 

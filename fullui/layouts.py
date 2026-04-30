@@ -153,7 +153,7 @@ def panel(text="", **kwargs):
     Panel(text, **kwargs).show()
 
 # =========================================================
-# COMPAT PANELS (FIX FOR __init__)
+# COMPAT PANELS
 # =========================================================
 
 def info_panel(text, **kwargs):

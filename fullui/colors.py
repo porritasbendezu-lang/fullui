@@ -3,6 +3,10 @@ colors.py
 
 ANSI color system, background colors, styles, helpers and utilities
 for terminal UI applications.
+
+v0.2.3 ADDITIONS:
+- Remove funtions and pass to ui.py functions
+- Custom gradients with multiple colors
 """
 
 # =========================================================
@@ -35,9 +39,7 @@ class C:
     purple     = "\033[38;2;128;0;128m"
     brown      = "\033[38;2;139;69;19m"
 
-    # =====================================================
-    # NEW COLORS (v0.2.0)
-    # =====================================================
+    # =============== NEW COLORS (v2.0.0) ===============
 
     gold          = "\033[38;2;212;175;55m"
     lime          = "\033[38;2;50;255;80m"
@@ -112,9 +114,7 @@ class BG:
     purple     = "\033[48;2;128;0;128m"
     brown      = "\033[48;2;139;69;19m"
 
-    # =====================================================
-    # NEW BACKGROUND COLORS (v0.2.0)
-    # =====================================================
+    # =============== NEW BACKGROWNDS COLORS (v0.2.0) ===============
 
     gold          = "\033[48;2;212;175;55m"
     lime          = "\033[48;2;50;255;80m"
@@ -200,46 +200,6 @@ def bg_rgb(r, g, b):
         b (int): blue (0-255)
     """
     return f"\033[48;2;{r};{g};{b}m"
-
-
-# =========================================================
-# HELPERS
-# =========================================================
-
-def success(text):
-    """
-    Success message style (green).
-    """
-    return f"{C.g}{text}{S.rs}"
-
-
-def error(text):
-    """
-    Error message style (red bold).
-    """
-    return f"{C.r}{S.bd}{text}{S.rs}"
-
-
-def warning(text):
-    """
-    Warning message style (yellow).
-    """
-    return f"{C.y}{text}{S.rs}"
-
-
-def info(text):
-    """
-    Info message style (cyan).
-    """
-    return f"{C.c}{text}{S.rs}"
-
-
-def miniTitle(text):
-    """
-    Small styled title header.
-    """
-    return f"{S.bd}{C.b}=== {text} ==={S.rs}"
-
 
 # =========================================================
 # BOX UTILITIES
@@ -377,14 +337,17 @@ def redGra(text):
     return out + S.rs
 
 
-def customGra(text, col1=C.w, col2=C.w, col3=C.w):
+def customGra(text, *colors):
     """
-    Custom 3-color gradient text.
+    Custom gradient text with unlimited colors.
 
     Args:
-        col1, col2, col3: ANSI colors
+        *colors: any number of ANSI colors
     """
-    colors = [col1, col2, col3]
+
+    if not colors:
+        colors = (C.w,)
+
     out = ""
 
     for i, ch in enumerate(text):

@@ -7,7 +7,7 @@ Advanced console UI system for Python terminals.
 # VERSION
 # =========================================================
 
-__version__ = "0.2.2"
+__version__ = "0.2.3"
 
 
 # =========================================================
@@ -39,12 +39,6 @@ from . import layouts
 from .colors import (
     C, BG, S,
     rgb, bg_rgb,
-
-    success,
-    error,
-    warning,
-    info,
-    miniTitle,
 
     box1, box2, box3, box4, box5, box6,
     customBox,
@@ -109,12 +103,26 @@ about = banner
 from .ui import (
     I,
 
+    book,
+    
+    quiz,
+    quiz_title,
+    quiz_question,
+    quiz_option,
+    
     menu,
     title,
     subtitle,
     option,
     opbreak,
 
+    success,
+    error,
+    warning,
+    info,
+    message,
+    miniTitle,
+    p,
     clear,
     pause,
     line_break,
@@ -140,7 +148,6 @@ from .layouts import (
     Panel,
     panel,
 
-    # 🔥 COMPAT (evita errores)
     info_panel,
     warning_panel,
     error_panel,
@@ -151,7 +158,6 @@ from .layouts import (
     stat,
     dashboard,
 
-    # 🔥 NUEVO SISTEMA
     register_layout,
     use_layout,
 
@@ -209,6 +215,27 @@ from .themes import (
     DEV,
     GAMER,
     BRUTAL,
+    
+    SUNSET,
+    OCEAN,
+    FOREST,
+    CYBERPUNK,
+    LAVENDER,
+    GOLD,
+    ROSE,
+    MIDNIGHT,
+    EMBER,
+    MINT,
+    CRIMSON_GOLD,
+    AQUA_LIME,
+    PURPLE_PINK,
+    BLUE_ORANGE,
+    EMERALD_GOLD,
+    RED_BLACK,
+    SKY_PURPLE,
+    MANGO_FIRE,
+    TEAL_ROSE,
+    INDIGO_CYAN,
 
     set_theme,
     get_theme,
@@ -230,14 +257,16 @@ __all__ = [
     # COLORS
     "C","BG","S",
     "rgb","bg_rgb",
-    "success","error","warning","info","miniTitle",
     "box1","box2","box3","box4","box5","box6","customBox",
     "rainbow","blueGra","redGra","customGra",
 
     # UI
     "I",
+    "book",
+    "quiz","quiz_title","quiz_question","quiz_option",
+    "success","error","warning","info","message","miniTitle",
     "menu","title","subtitle","option","opbreak",
-    "clear","pause","line_break","lb",
+    "p","clear","pause","line_break","lb",
     "system_panel","themes_manager","animations_preview",
     "system_info","registry_inspector",
     "register_theme","register_color","register_animation",
@@ -262,5 +291,9 @@ __all__ = [
     "DEFAULT","DARK","NEON","FIRE","ICE",
     "HACKER","VOID","ELECTRIC","NIGHT",
     "ALERT","FROST","NATURE","DEV","GAMER","BRUTAL",
-    "set_theme","get_theme","apply_theme","create_theme",
+    "SUNSET","OCEAN","FOREST","CYBERPUNK","LAVENDER",
+    "GOLD","ROSE","MIDNIGHT","EMBER","MINT","CRIMSON_GOLD",
+    "AQUA_LIME","PURPLE_PINK","BLUE_ORANGE","EMERALD_GOLD",
+    "RED_BLACK","SKY_PURPLE","MANGO_FIRE","TEAL_ROSE",
+    "INDIGO_CYAN","set_theme","get_theme","apply_theme","create_theme",
 ]
