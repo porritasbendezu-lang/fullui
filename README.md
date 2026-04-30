@@ -1,97 +1,69 @@
-# 🎨 FULLUI — Console UI System
+# 🎨 FULLUI --- Console UI System
 
-> Build beautiful, interactive terminal apps — fast.
+> Build beautiful, interactive terminal apps --- fast.
 
-FULLUI is a powerful and lightweight **console UI framework for Python**, designed to transform boring CLI programs into visually rich experiences.
+FULLUI is a powerful and lightweight **console UI framework for
+Python**, designed to transform boring CLI programs into visually rich
+experiences.
 
----
+------------------------------------------------------------------------
 
 # ✨ Features
 
-* 🎨 ANSI + RGB color system
-* 🌈 Advanced gradients
-* ✨ Text styling system
-* 🧱 Decorative boxes
-* 🪟 Layout System (NEW)
-* 🎮 Flexible alias-based menu system
-* ⚡ Terminal animations
-* 🎭 Plug & Play Theme Engine
-* 🛠 Developer Tools Panel
-* 📦 Registry System
-* 🎉 Welcome Banner System
-* 🧠 Modular architecture
+-   🎨 ANSI + RGB color system
+-   🌈 Advanced gradients
+-   ✨ Text styling system
+-   🧱 Decorative boxes
+-   🪟 Layout System
+-   🎮 Flexible alias-based menu system
+-   ⚡ Terminal animations
+-   🎭 Plug & Play Theme Engine
+-   🛠 Developer Tools Panel
+-   📦 Modular architecture
 
----
+------------------------------------------------------------------------
 
-# 🆕 New in v0.2.1
+# 🆕 New in v0.2.2
 
-## 🪟 Layout System Added
+## Improvements & Refinements
 
-Build terminal layouts and panels easily.
+-   Improved UI rendering performance
+-   Better theme handling
+-   Cleaner module structure
+-   Internal optimizations
+-   Preparation for future widgets system
 
-```python
-from fullui import *
-
-panel(
-    "Stats",
-    "HP:100\nMana:50"
-)
-
-columns(
-    [
-        "Inventory",
-        "Map",
-        "Player"
-    ]
-)
-```
-
-Included:
-
-* panel()
-* columns()
-* split()
-* dashboard()
-* stack()
-
-Perfect for:
-
-- dashboards
-- game HUDs
-- terminal apps
-- status panels
-
----
+------------------------------------------------------------------------
 
 # 🎯 Perfect For
 
-* Console games
-* CLI tools
-* Interactive terminal apps
-* UI prototyping
-* Terminal dashboards
+-   Console games
+-   CLI tools
+-   Interactive terminal apps
+-   UI prototyping
+-   Terminal dashboards
 
----
+------------------------------------------------------------------------
 
 # 📦 Installation
 
-```bash
+``` bash
 pip install fullui
 ```
 
----
+------------------------------------------------------------------------
 
 ## ✨ Verify Installation
 
-```bash
+``` bash
 python -c "import fullui; fullui.banner()"
 ```
 
----
+------------------------------------------------------------------------
 
 # 🚀 Quick Start
 
-```python
+``` python
 from fullui import *
 
 banner()
@@ -105,11 +77,11 @@ menu(
 )
 ```
 
----
+------------------------------------------------------------------------
 
 # 🧩 Recommended Import Style
 
-```python
+``` python
 from fullui.colors import C,S
 from fullui.ui import menu
 from fullui.layouts import panel
@@ -125,16 +97,16 @@ choice = menu(
 )
 ```
 
----
+------------------------------------------------------------------------
 
 # 🧠 Menu Behavior
 
-* Loops until valid input
-* Returns int
-* Invalid input handled automatically
-* Returns None on exit
+-   Loops until valid input
+-   Returns int
+-   Invalid input handled automatically
+-   Returns None on exit
 
-```python
+``` python
 choice = menu(
     t="Game",
     op=["Play","Settings"]
@@ -146,11 +118,11 @@ elif choice is None:
     print("Exit")
 ```
 
----
+------------------------------------------------------------------------
 
 # 🎨 Themes
 
-```python
+``` python
 from fullui import *
 
 set_theme(NEON)
@@ -163,7 +135,7 @@ menu(
 
 Custom:
 
-```python
+``` python
 my_theme = create_theme(
     titleColor=C.r,
     inputColor=C.g
@@ -172,13 +144,13 @@ my_theme = create_theme(
 set_theme(my_theme)
 ```
 
----
+------------------------------------------------------------------------
 
-# 🪟 Layout Examples
+# 🪟 Layout System
 
 ## Panel
 
-```python
+``` python
 panel(
  "Player",
  "HP:100\nMana:50"
@@ -187,7 +159,7 @@ panel(
 
 ## Columns
 
-```python
+``` python
 columns(
  [
    "Inventory",
@@ -199,7 +171,7 @@ columns(
 
 ## Dashboard
 
-```python
+``` python
 dashboard([
  "CPU 40%",
  "RAM 62%",
@@ -207,39 +179,39 @@ dashboard([
 ])
 ```
 
----
+------------------------------------------------------------------------
 
 # 🎨 Colors
 
-```python
+``` python
 print(C.r+"Red"+S.rs)
 print(S.bd+"Bold"+S.rs)
 ```
 
----
+------------------------------------------------------------------------
 
 # 🌈 Gradients
 
-```python
+``` python
 print(rainbow("FULLUI"))
 ```
 
----
+------------------------------------------------------------------------
 
 # 🎬 Animations
 
-```python
+``` python
 spinner()
 glitch("ERROR")
 progress_fill()
 loading_dots()
 ```
 
----
+------------------------------------------------------------------------
 
 # 🖥 UI Alias System
 
-```python
+``` python
 menu(
  t="Menu",
  st="Info",
@@ -251,82 +223,34 @@ Aliases:
 
 t, st, op, bs...
 
----
+------------------------------------------------------------------------
 
 # 🔧 Utilities
 
-```python
+``` python
 clear()
 pause()
 ```
 
----
+------------------------------------------------------------------------
 
 # 🧩 Full Import
 
-```python
+``` python
 from fullui import *
 ```
 
 Everything exposed through `__all__`.
 
----
-
-# 🆕 Patch Notes — v0.2.1
-
-## Added
-
-### Layout System
-
-New module:
-
-```python
-fullui.layouts
-```
-
-Functions added:
-
-* panel()
-* columns()
-* split()
-* stack()
-* dashboard()
-
----
-
-## Improvements
-
-* Better architecture for future widgets
-* Layout API designed for expansion
-* Foundation for Data UI module
-* Cleaner module organization
-
----
-
-## Internal
-
-* Added layouts to public API
-* Updated package exports
-* Prepared roadmap for widgets
-
----
-
-## Fixed
-
-* breakSymbol naming cleanup
-* minor layout width handling
-* documentation improvements
-
-
----
+------------------------------------------------------------------------
 
 # 📄 License
 
 MIT License
 
----
+------------------------------------------------------------------------
 
 # 👨‍💻 Author
 
-**Leonardo Farid Porras Bendezú**  
+**Leonardo Farid Porras Bendezú**\
 aka **LeonardX007**

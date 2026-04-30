@@ -10,7 +10,7 @@ Provides:
 - Input handling
 - Improved CLI flow utilities (validation + loop)
 
-🔥 v0.2.0 ADDITIONS:
+v0.2.0 ADDITIONS:
 - System Panel (Developer Tools)
 - Theme / Color / Animation Inspectors
 - Registry System (extensibility)
@@ -106,7 +106,7 @@ class I:
     bt = "breakText"
     breakText = "breakText"
 
-    # 🔥 FIX: typo corregido
+    #FIX: typo corregido
     bs = "breakSymbol"
     breakSymbol = "breakSymbol"
 
@@ -127,6 +127,12 @@ class I:
 
     p = "prompt"
     prompt = "prompt"
+    
+    io = "invalidOption"
+    invalidOption = "invalidOption"
+    
+    ioc = "invalidOptionColor"
+    invalidOptionColor = "invalidOptionColor"
 
 # =========================================================
 # UTILITIES
@@ -137,10 +143,9 @@ lb = line_break
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
-    print("\033[H", end="")
 
-def pause():
-    input(C.b + S.bd + "Press Enter..." + S.rs)
+def pause(text="", colorText=C.m, style=S.bd):
+    input(f"{colorText}{style}{text}{S.rs}")
 
 # =========================================================
 # UI COMPONENTS
@@ -229,41 +234,63 @@ def themes_manager():
     ] + list(_THEME_REGISTRY.values())
 
     while True:
-        clear()
-        title("THEMES MANAGER")
+        # ===============================
+        # MENU DE TEMAS
+        # ===============================
+        choice = menu(
+            t="THEMES MANAGER",
+            st=f"Active: {get_theme().name}",
+            op=[t.name for t in themes],
+            bt="Back",
+            bs="X"
+        )
 
-        print(C.c + "Active Theme:" + S.rs, C.y + get_theme().name + S.rs)
-        print()
-
-        for i, t in enumerate(themes, 1):
-            print(f"{C.g}[{i}]{S.rs} {C.w}{t.name}{S.rs}")
-
-        print("\n" + C.r + "[X] Back" + S.rs)
-
-        choice = input("\n> ")
-
-        if choice.lower() == "x":
+        if choice is None:
             return
 
-        if choice.isdigit():
-            n = int(choice)
+        selected = themes[choice - 1]
 
-            if 1 <= n <= len(themes):
-                selected = themes[n - 1]
+        # ===============================
+        # PREVIEW VISUAL
+        # ===============================
+        while True:
+            preview_choice = menu(
+                t="THEME PREVIEW",
+                st=f"Preview: {selected.name}",
+                op=[
+                    "Apply Theme",
+                    "Preview Again"
+                ],
+                bt="Back",
+                bs="X",
 
-                clear()
-                title("THEME PREVIEW")
+                # 🔥 AQUÍ FORZAMOS ESTILO DEL THEME
+                tcm=selected.titleColorMargins,
+                tct=selected.titleColor,
+                ts=selected.titleStyle,
 
-                print(selected.titleColor + selected.titleStyle + "Title Example" + S.rs)
-                print(selected.subtitleColor + selected.subtitleStyle + "Subtitle Example" + S.rs)
-                print(selected.optionKeyColor + "[1]" + S.rs, selected.optionColor + "Option Example" + S.rs)
+                sc=selected.subtitleColor,
+                ss=selected.subtitleStyle,
 
-                print("\n" + C.y + "Apply this theme? (y/n)" + S.rs)
+                ock=selected.optionKeyColor,
+                oct=selected.optionColor,
 
-                if input("> ").lower() == "y":
-                    set_theme(selected)
-                    print(C.g + "Theme applied!" + S.rs)
-                    time.sleep(1)
+                bck=selected.breakKeyColor,
+                bct=selected.breakColor
+            )
+
+            if preview_choice is None:
+                break
+
+            if preview_choice == 1:
+                set_theme(selected)
+                menu(
+                    t="SUCCESS",
+                    st=f"{selected.name} applied!",
+                    op=["Continue"],
+                    sB=False
+                )
+                break
 
 # =========================================================
 # ANIMATIONS PREVIEW
@@ -327,12 +354,36 @@ def show_colors():
     clear()
     title("COLOR INSPECTOR")
 
-    for k, v in C.__dict__.items():
-        if not k.startswith("_"):
-            print(v + k + S.rs)
+    # Obtener atributos válidos
+    colors = {k: v for k, v in C.__dict__.items() if not k.startswith("_")}
 
+    # Agrupar por valor (color real)
+    grouped = {}
+
+    for name, value in colors.items():
+        grouped.setdefault(value, []).append(name)
+
+    # Mostrar agrupados
+    for value, names in grouped.items():
+        main = None
+        alias = None
+
+        # Elegir nombre largo como principal y corto como alias
+        for n in names:
+            if len(n) > 2:
+                main = n
+            else:
+                alias = n
+
+        if main and alias:
+            print(value + f"{main} = {alias}" + S.rs)
+        else:
+            # fallback si no hay alias claro
+            print(value + ", ".join(names) + S.rs)
+
+    # Colores registrados manualmente
     for k, v in _COLOR_REGISTRY.items():
-        print(v + k + S.rs)
+        print(v + f"{k} (custom)" + S.rs)
 
     pause()
 
@@ -398,7 +449,9 @@ def menu(**kwargs):
         "bst": "breakStyle",
         "ic": "inputColor",
         "isty": "inputStyle",
-        "p": "prompt"
+        "p": "prompt",
+        "io": "invalidOption",
+        "ioc": "invalidOptionColor"
     }
 
     normalized = {alias_map.get(k, k): v for k, v in kwargs.items()}
@@ -489,5 +542,8 @@ def menu(**kwargs):
             if 1 <= n <= len(options):
                 return n
 
-        print(C.r + "Invalid option" + S.rs)
-        time.sleep(1)
+        print(
+            f"{normalized.get('invalidOptionColor', C.r)}"
+            f"{normalized.get('invalidOption', "Opcion incorrecta")}{S.rs}"
+            )
+        pause()

@@ -2,229 +2,320 @@
 layouts.py
 
 Layout system for FULLUI.
+Fully customizable + Layout Presets + Compatibility safe.
 """
+
+# =========================================================
+# IMPORTS
+# =========================================================
 
 from .colors import C, S
 
+# =========================================================
+# ALIAS SYSTEM
+# =========================================================
+
+LAYOUT_ALIAS = {
+    "w": "width",
+    "b": "border",
+    "c": "color",
+    "t": "title",
+    "tc": "titleColor",
+    "p": "padding",
+    "a": "align",
+    "g": "gap",
+    "lw": "leftWidth",
+    "rw": "rightWidth"
+}
+
+def _normalize(kwargs):
+    return {LAYOUT_ALIAS.get(k, k): v for k, v in kwargs.items()}
 
 # =========================================================
-# BASE PANEL
+# PANEL CORE
 # =========================================================
 
 class Panel:
-    """
-    Generic bordered panel.
-    """
 
-    def __init__(
-        self,
-        text="",
-        width=50,
-        border="single",
-        color=C.w,
-        title=None,
-        padding=1
-    ):
+    def __init__(self, text="", **kwargs):
+        from .themes import get_theme
+
+        cfg = _normalize(kwargs)
+        theme = get_theme()
+
         self.text = text
-        self.width = width
-        self.border = border
-        self.color = color
-        self.title = title
-        self.padding = padding
+        self.width = cfg.get("width", 50)
+        self.border = cfg.get("border", "single")
+        self.color = cfg.get("color", theme.textColor)
 
+        self.title = cfg.get("title", None)
+        self.titleColor = cfg.get("titleColor", theme.titleColor)
+
+        self.padding = cfg.get("padding", 1)
+        self.align = cfg.get("align", "left")
+
+        self.theme = theme
 
     def _chars(self):
-
         styles = {
             "single": ("┌","┐","└","┘","─","│"),
             "double": ("╔","╗","╚","╝","═","║"),
             "round":  ("╭","╮","╰","╯","─","│"),
             "heavy":  ("┏","┓","┗","┛","━","┃")
         }
+        return styles.get(self.border, styles["single"])
 
-        return styles.get(
-            self.border,
-            styles["single"]
-        )
+    def _align(self, text, width):
+        if self.align == "center":
+            return text.center(width)
+        elif self.align == "right":
+            return text.rjust(width)
+        return text.ljust(width)
 
+    def _wrap(self, text, width):
+        words = text.split(" ")
+        lines = []
+        current = ""
+
+        for w in words:
+            if len(current + w) + 1 <= width:
+                current += w + " "
+            else:
+                lines.append(current.strip())
+                current = w + " "
+
+        if current:
+            lines.append(current.strip())
+
+        return lines
 
     def render(self):
-
         tl,tr,bl,br,h,v = self._chars()
+        inner = self.width - 2
 
-        lines = self.text.split("\n")
+        raw_lines = self.text.split("\n")
+        lines = []
 
-        inner_width = self.width - 2
+        for line in raw_lines:
+            lines.extend(self._wrap(line, inner))
 
-        top = tl + h*inner_width + tr
-        bottom = bl + h*inner_width + br
+        top = tl + h*inner + tr
+        bottom = bl + h*inner + br
 
-        output = []
+        out = []
 
-        output.append(self.color + top)
+        out.append(self.color + self.theme.titleStyle + top + S.rs)
 
         if self.title:
-            title_line = (
+            title = self.title[:inner]  # evita overflow
+            pad_total = inner - len(title)
+            pad_left = pad_total // 2
+            pad_right = pad_total - pad_left
+
+            centered = (" " * pad_left) + title + (" " * pad_right)
+
+            out.append(
+                self.titleColor +
+                self.theme.titleStyle +
                 v +
-                self.title.center(inner_width) +
-                v
+                centered +
+                v +
+                S.rs
             )
-            output.append(title_line)
 
         for _ in range(self.padding):
-            output.append(v + " "*inner_width + v)
+            out.append(v + " "*inner + v)
 
         for line in lines:
-            output.append(
+            out.append(
+                self.theme.optionColor +
                 v +
-                line[:inner_width].ljust(inner_width) +
-                v
+                self._align(line, inner) +
+                v +
+                S.rs
             )
 
         for _ in range(self.padding):
-            output.append(v + " "*inner_width + v)
+            out.append(v + " "*inner + v)
 
-        output.append(bottom + S.rs)
+        out.append(self.color + bottom + S.rs)
 
-        return "\n".join(output)
-
+        return "\n".join(out)
 
     def show(self):
         print(self.render())
 
-
 # =========================================================
-# QUICK PANELS
+# QUICK PANEL
 # =========================================================
 
-def panel(text, **kwargs):
+def panel(text="", **kwargs):
     Panel(text, **kwargs).show()
 
-
-def info_panel(text):
-    panel(
-        text,
-        title="INFO",
-        color=C.c,
-        border="round"
-    )
-
-
-def warning_panel(text):
-    panel(
-        text,
-        title="WARNING",
-        color=C.y,
-        border="double"
-    )
-
-
-def error_panel(text):
-    panel(
-        text,
-        title="ERROR",
-        color=C.r,
-        border="heavy"
-    )
-
-
 # =========================================================
-# COLUMNS LAYOUT
+# COMPAT PANELS (FIX FOR __init__)
 # =========================================================
 
-def columns(*texts, width=30, gap=4):
-    """
-    Side by side columns.
-    """
+def info_panel(text, **kwargs):
+    from .themes import get_theme
+    t = get_theme()
+    panel(text, t="INFO", c=t.subtitleColor, b="round", **kwargs)
 
-    blocks=[]
+def warning_panel(text, **kwargs):
+    from .themes import get_theme
+    t = get_theme()
+    panel(text, t="WARNING", c=t.optionColor, b="double", **kwargs)
 
-    for t in texts:
-        lines=t.split("\n")
-        blocks.append(lines)
+def error_panel(text, **kwargs):
+    from .themes import get_theme
+    t = get_theme()
+    panel(text, t="ERROR", c=t.breakColor, b="heavy", **kwargs)
 
-    max_lines=max(len(b) for b in blocks)
+# =========================================================
+# COLUMNS
+# =========================================================
+
+def columns(*items, **kwargs):
+    cfg = _normalize(kwargs)
+    gap = cfg.get("gap", 4)
+
+    blocks = []
+
+    for item in items:
+        if isinstance(item, Panel):
+            blocks.append(item.render().split("\n"))
+        else:
+            blocks.append(str(item).split("\n"))
+
+    max_lines = max(len(b) for b in blocks)
 
     for b in blocks:
-        while len(b)<max_lines:
+        while len(b) < max_lines:
             b.append("")
 
     for i in range(max_lines):
-        row=[]
-        for block in blocks:
-            row.append(
-                block[i][:width].ljust(width)
-            )
-        print((" "*gap).join(row))
-
+        print((" " * gap).join(block[i] for block in blocks))
 
 # =========================================================
-# SPLIT SCREEN
+# SPLIT
 # =========================================================
 
-def split(left,right,width=35):
+def split(left, right, **kwargs):
+    cfg = _normalize(kwargs)
+    width = cfg.get("width", 35)
+
     columns(
-        left,
-        right,
-        width=width
+        Panel(left, width=width),
+        Panel(right, width=width),
+        **kwargs
     )
 
-
 # =========================================================
-# DASHBOARD ROW
+# DASHBOARD CORE
 # =========================================================
 
-def stat(label,value,color=C.g):
-
-    txt=(
-        f"{label}: {value}"
-    )
-
+def stat(label, value, **kwargs):
     return Panel(
-        txt,
-        width=24,
-        color=color,
-        border="round"
-    ).render()
+        f"{label}: {value}",
+        w=24,
+        a="center",
+        b="round",
+        **kwargs
+    )
 
-
-def dashboard(stats):
-    """
-    stats=[("HP",100), ("Gold",999)]
-    """
-
-    rendered=[]
-
-    for label,value in stats:
-        rendered.append(
-            stat(label,value)
-            .split("\n")
-        )
-
-    max_lines=max(len(x) for x in rendered)
-
-    for i in range(max_lines):
-        row=[]
-        for panel in rendered:
-            row.append(panel[i])
-        print("  ".join(row))
-
+def dashboard(stats, **kwargs):
+    panels = [stat(k, v, **kwargs) for k, v in stats]
+    columns(*panels, **kwargs)
 
 # =========================================================
-# FUTURE GRID CLASS (v0.2.2)
+# LAYOUT PRESETS SYSTEM
+# =========================================================
+
+_LAYOUT_PRESETS = {}
+
+def register_layout(name, func):
+    _LAYOUT_PRESETS[name] = func
+
+def use_layout(name, *args, **kwargs):
+    if name in _LAYOUT_PRESETS:
+        return _LAYOUT_PRESETS[name](*args, **kwargs)
+    else:
+        raise ValueError(f"Layout '{name}' not found")
+
+# =========================================================
+# PRESETS
+# =========================================================
+
+def sidebar(menu_text, content, **kwargs):
+    cfg = _normalize(kwargs)
+    lw = cfg.get("leftWidth", 30)
+    rw = cfg.get("rightWidth", 50)
+
+    left = Panel(menu_text, width=lw, title="MENU")
+    right = Panel(content, width=rw, title="CONTENT")
+
+    columns(left, right, **kwargs)
+
+def dashboard_layout(stats, **kwargs):
+    panels = [
+        Panel(f"{k}: {v}", w=24, a="center", b="round")
+        for k, v in stats
+    ]
+    columns(*panels, **kwargs)
+
+def split_layout(left, right, **kwargs):
+    cfg = _normalize(kwargs)
+    width = cfg.get("width", 40)
+
+    columns(
+        Panel(left, width=width),
+        Panel(right, width=width),
+        **kwargs
+    )
+
+def stack(*items, **kwargs):
+    for item in items:
+        if isinstance(item, Panel):
+            print(item.render())
+        else:
+            panel(str(item), **kwargs)
+
+def hero(title, subtitle="", **kwargs):
+    cfg = _normalize(kwargs)
+    width = cfg.get("width", 60)
+
+    content = f"{title}\n\n{subtitle}"
+
+    Panel(
+        content,
+        width=width,
+        border="double",
+        align="center",
+        padding=2
+    ).show()
+
+# =========================================================
+# REGISTER DEFAULT PRESETS
+# =========================================================
+
+register_layout("sidebar", sidebar)
+register_layout("dashboard", dashboard_layout)
+register_layout("split", split_layout)
+register_layout("stack", stack)
+register_layout("hero", hero)
+
+# =========================================================
+# GRID (FUTURE)
 # =========================================================
 
 class Grid:
-    """
-    Placeholder for future upgrade.
-    """
+    def __init__(self, **kwargs):
+        self.items = []
+        self.kwargs = kwargs
 
-    def __init__(self):
-        self.items=[]
-
-    def add(self,item):
+    def add(self, item):
         self.items.append(item)
 
     def show(self):
-        for item in self.items:
-            print(item)
+        columns(*self.items, **self.kwargs)
+
