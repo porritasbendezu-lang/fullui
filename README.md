@@ -24,7 +24,7 @@ experiences.
 
 ------------------------------------------------------------------------
 
-# 🆕 New in v0.2.2
+# 🆕 New in v0.2.4
 
 ## Improvements & Refinements
 

@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: fullui
-Version: 0.2.3
+Version: 0.2.4
 Summary: Advanced console UI framework for Python with colors, layouts, animations, themes, developer tools and interactive menus
 Author-email: Leonardo Farid Porras Bendezu <porritasbendezu@gmail.com>
 Maintainer-email: Leonardo Farid Porras Bendezu <porritasbendezu@gmail.com>
@@ -69,7 +69,7 @@ experiences.
 
 ------------------------------------------------------------------------
 
-# 🆕 New in v0.2.2
+# 🆕 New in v0.2.4
 
 ## Improvements & Refinements
 

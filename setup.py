@@ -8,7 +8,7 @@ class PostInstallCommand(install):
 
         print(r"""
 ╔══════════════════════════════════════╗
-║      FULLUI v0.2.3 INSTALLED ✓       ║
+║      FULLUI v0.2.4 INSTALLED ✓       ║
 ║  Advanced Console UI Framework       ║
 ╚══════════════════════════════════════╝
 
