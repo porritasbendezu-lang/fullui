@@ -5,6 +5,7 @@ setup.py
 fullui/__init__.py
 fullui/animations.py
 fullui/colors.py
+fullui/icons.py
 fullui/layouts.py
 fullui/themes.py
 fullui/ui.py
@@ -12,5 +13,6 @@ fullui.egg-info/PKG-INFO
 fullui.egg-info/SOURCES.txt
 fullui.egg-info/dependency_links.txt
 fullui.egg-info/entry_points.txt
+fullui.egg-info/not-zip-safe
 fullui.egg-info/requires.txt
 fullui.egg-info/top_level.txt

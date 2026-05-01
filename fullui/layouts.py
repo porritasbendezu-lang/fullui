@@ -38,10 +38,10 @@ def _normalize(kwargs):
 class Panel:
 
     def __init__(self, text="", **kwargs):
-        from .themes import get_theme
+        from .themes import getTheme
 
         cfg = _normalize(kwargs)
-        theme = get_theme()
+        theme = getTheme()
 
         self.text = text
         self.width = cfg.get("width", 50)
@@ -156,19 +156,19 @@ def panel(text="", **kwargs):
 # COMPAT PANELS
 # =========================================================
 
-def info_panel(text, **kwargs):
-    from .themes import get_theme
-    t = get_theme()
+def infoPanel(text, **kwargs):
+    from .themes import getTheme
+    t = getTheme()
     panel(text, t="INFO", c=t.subtitleColor, b="round", **kwargs)
 
-def warning_panel(text, **kwargs):
-    from .themes import get_theme
-    t = get_theme()
+def warningPanel(text, **kwargs):
+    from .themes import getTheme
+    t = getTheme()
     panel(text, t="WARNING", c=t.optionColor, b="double", **kwargs)
 
-def error_panel(text, **kwargs):
-    from .themes import get_theme
-    t = get_theme()
+def errorPanel(text, **kwargs):
+    from .themes import getTheme
+    t = getTheme()
     panel(text, t="ERROR", c=t.breakColor, b="heavy", **kwargs)
 
 # =========================================================
@@ -233,10 +233,10 @@ def dashboard(stats, **kwargs):
 
 _LAYOUT_PRESETS = {}
 
-def register_layout(name, func):
+def registerLayout(name, func):
     _LAYOUT_PRESETS[name] = func
 
-def use_layout(name, *args, **kwargs):
+def useLayout(name, *args, **kwargs):
     if name in _LAYOUT_PRESETS:
         return _LAYOUT_PRESETS[name](*args, **kwargs)
     else:
@@ -256,14 +256,14 @@ def sidebar(menu_text, content, **kwargs):
 
     columns(left, right, **kwargs)
 
-def dashboard_layout(stats, **kwargs):
+def dashboardLayout(stats, **kwargs):
     panels = [
         Panel(f"{k}: {v}", w=24, a="center", b="round")
         for k, v in stats
     ]
     columns(*panels, **kwargs)
 
-def split_layout(left, right, **kwargs):
+def splitLayout(left, right, **kwargs):
     cfg = _normalize(kwargs)
     width = cfg.get("width", 40)
 
@@ -298,11 +298,11 @@ def hero(title, subtitle="", **kwargs):
 # REGISTER DEFAULT PRESETS
 # =========================================================
 
-register_layout("sidebar", sidebar)
-register_layout("dashboard", dashboard_layout)
-register_layout("split", split_layout)
-register_layout("stack", stack)
-register_layout("hero", hero)
+registerLayout("sidebar", sidebar)
+registerLayout("dashboard", dashboardLayout)
+registerLayout("split", splitLayout)
+registerLayout("stack", stack)
+registerLayout("hero", hero)
 
 # =========================================================
 # GRID (FUTURE)

@@ -1,602 +1,705 @@
-import time
-import sys
-import random
-
-
 """
 animations.py
 
 Animated effects for terminal interfaces.
 
-Includes:
-- Loading spinners
-- Progress animations
-- Text reveal effects
-- Glitch and pulse effects
+v0.3.0 ADDITIONS:
+- Icons (I)
+- Gradients (G)
+- Bug fixes
+- Better rendering
 """
-
 
 # =========================================================
 # IMPORTS
 # =========================================================
 
-try:
-    from .colors import C, S, BG
-except ImportError:
-    from colors import C, S, BG
+import time
+import sys
+import random
 
+# =============== EXCEPT ===============
+
+try:
+    from .colors import C, S, BG, G
+    from .icons import I
+except ImportError:
+    from colors import C, S, BG, G
+    from icons import I
+
+# =========================================================
+# REDER
+# =========================================================
+
+def _render(text, color=None, gradient=None):
+    # PRIORIDAD: gradient SOLO si se usa explícitamente
+    if gradient is not None and color is None:
+        return gradient(text)
+
+    if color is not None and gradient is None:
+        return f"{color}{text}{S.rs}"
+
+    if gradient is not None and color is not None:
+        # híbrido real (no uno reemplaza al otro)
+        return gradient(f"{color}{text}{S.rs}")
+
+    return text
+
+# =========================================================
+# GLOBAL CONFIG (EDITABLE SYSTEM)
+# =========================================================
+
+_ANIM_CONFIG = {
+    # Base spinners
+    "spinner_frames": [I.circle, I.circle_empty, I.circle_dot, I.circle_half],
+    "spinner_dots_frames": ["⠁","⠃","⠇","⠧","⠷","⠿"],
+    "spinner_bar_frames": ["▁","▂","▃","▄","▅","▆","▇","█"],
+    "spiral_frames": ["◐","◓","◑","◒"],
+    "icon_spin_frames": ["|","/","-","\\"],
+
+    # Characters
+    "glitch_chars": "@#$%&*!?",
+    "glitch_heavy_chars": "@#$%&*!?<>[]{}",
+    "matrix_chars": "01@#$%&",
+    "type_shuffle_chars": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+
+    # Colors
+    "pulse_colors": [C.r, C.y, C.g, C.c, C.b, C.m],
+
+    # Gradients
+    "default_gradient": G.fire,
+    "gradient_spinner_bar": G.ocean,
+    "gradient_loading_blocks": G.neon,
+    "gradient_scanner": G.ice,
+    "gradient_fire": G.fire,
+    "gradient_success": G.gold,
+
+    # Icons
+    "energy_icons": [I.circle, I.circle_dot, I.block],
+    "burst_icons": [I.circle, I.star, I.sparkle, I.check],
+
+    # Success frames
+    "success_frames": [
+        f"[{I.square_empty}]",
+        f"[{I.check}]",
+        f"[{I.check}{I.check}]"
+    ],
+
+    # Misc
+    "shake_range": (0, 5),
+}
+
+def set_anim(key, value):
+    _ANIM_CONFIG[key] = value
+
+def get_anim(key, default=None):
+    return _ANIM_CONFIG.get(key, default)
 
 # =========================================================
 # INTERNAL HELPERS
 # =========================================================
 
 def _flush(text=""):
-    """
-    Overwrite current terminal line.
-    """
     sys.stdout.write("\r" + text)
     sys.stdout.flush()
 
-
 def _reset():
-    """
-    Reset styles and move to next line.
-    """
     sys.stdout.write(S.rs + "\n")
     sys.stdout.flush()
 
-
 # =========================================================
-# SPINNER
+# ANIMATIONS
 # =========================================================
 
-def spinner(
-    text="Loading",
-    duration=3,
-    speed=0.1,
-    color=C.c,
-    style=S.bd
-):
-    """
-    Classic rotating loading spinner.
+# =============== SPINNER ===============
 
-    Parameters:
-        text (str): Prefix text.
-        duration (int|float): Total seconds.
-        speed (float): Frame speed.
-    """
+def spinner(text="Loading", duration=3, speed=0.1,
+            color=None, gradient=None, style=S.bd, frames=None):
 
-    frames = ["|", "/", "-", "\\"]
+    frames = frames or get_anim("spinner_frames")
+
     end = time.time() + duration
     i = 0
 
     while time.time() < end:
-        _flush(
-            f"{color}{style}{text} {frames[i % 4]}{S.rs}"
-        )
+        frame = f"{frames[i % len(frames)]} {text}"
+        _flush(_render(frame, color=color, gradient=gradient))
         time.sleep(speed)
         i += 1
 
     _reset()
 
+# =============== DOT RIPPLE ===============
 
-# =========================================================
-# DOT RIPPLE
-# =========================================================
+def dot_ripple(text="Loading", duration=3, speed=0.3,
+               color=None, gradient=None, style=S.bd):
 
-def dot_ripple(
-    text="Loading",
-    duration=3,
-    speed=0.3,
-    color=C.y,
-    style=S.bd
-):
-    """
-    Animated growing dot loader.
-    """
-
+    pattern = ["", ".", "..", "..."]
     end = time.time() + duration
-    pattern = [".", "..", "...", "...."]
+
+    i = 0
 
     while time.time() < end:
         for p in pattern:
             if time.time() >= end:
                 break
 
-            _flush(
-                f"{color}{style}{text}{p}{S.rs}"
-            )
+            frame = f"{text}{p}"
+            _flush(_render(frame, color=color, gradient=gradient))
             time.sleep(speed)
+
+        i += 1
 
     _reset()
 
+# =============== BOUNCE ===============
 
-# =========================================================
-# BOUNCE
-# =========================================================
-
-def bounce(
-    text="UI",
-    times=10,
-    speed=0.05,
-    color=C.m,
-    style=S.bd
-):
-    """
-    Horizontal bouncing text animation.
-    """
+def bounce(text="UI", times=10, speed=0.05,
+           color=None, gradient=None):
 
     width = 10
 
     for _ in range(times):
-
         for i in range(width):
-            _flush(
-                " " * i +
-                f"{color}{style}{text}{S.rs}"
-            )
+            frame = " " * i + text
+            _flush(_render(frame, color=color, gradient=gradient))
             time.sleep(speed)
 
         for i in range(width, 0, -1):
-            _flush(
-                " " * i +
-                f"{color}{style}{text}{S.rs}"
-            )
+            frame = " " * i + text
+            _flush(_render(frame, color=color, gradient=gradient))
             time.sleep(speed)
 
     _reset()
 
+# =============== MATRIX ===============
 
-# =========================================================
-# MATRIX
-# =========================================================
+def matrix(text="SYSTEM", speed=0.05,
+           color=None, gradient=None):
 
-def matrix(
-    text="SYSTEM",
-    speed=0.05,
-    color=C.g,
-    style=S.bd
-):
-    """
-    Matrix-style character reveal effect.
-    """
-
-    chars = "01!@#$%"
+    chars = "01@#$%&"
 
     for ch in text:
-
         for _ in range(3):
-            _flush(
-                f"{color}{style}"
-                f"{random.choice(chars)}"
-                f"{S.rs}"
-            )
+            _flush(_render(random.choice(chars), color=color, gradient=gradient))
             time.sleep(speed)
 
-        _flush(
-            f"{color}{style}{ch}{S.rs}"
-        )
+        _flush(_render(ch, color=color, gradient=gradient))
 
     _reset()
 
+# =============== FADE IN ===============
 
-# =========================================================
-# FADE IN
-# =========================================================
+def fade_in(text, speed=0.05,
+            color=None, gradient=None):
 
-def fade_in(
-    text,
-    speed=0.05,
-    color=C.w,
-    style=S.bd
-):
-    """
-    Reveal text progressively.
-    """
-
-    for i in range(1, len(text)+1):
-
-        _flush(
-            f"{color}{style}"
-            f"{text[:i]}"
-            f"{S.rs}"
-        )
+    out = ""
+    for ch in text:
+        out += ch
+        _flush(_render(out, color=color, gradient=gradient))
         time.sleep(speed)
 
     _reset()
 
+# =============== PULSE BAR ===============
 
-# =========================================================
-# PROGRESS BAR
-# =========================================================
+def pulse_bar(text="FULLUI", cycles=10, speed=0.1,
+              color=None, gradient=None):
 
-def pulse_bar(
-    total=100,
-    width=30,
-    speed=0.02,
-    color=C.g,
-    style=S.bd
-):
-    """
-    Animated progress bar.
-    """
-
-    for i in range(total+1):
-
-        percent = i / total
-
-        bar = (
-            "█" * int(width * percent)
-            + "-" * (width - int(width * percent))
-        )
-
-        _flush(
-            f"{color}{style}"
-            f"[{bar}] {int(percent*100)}%"
-            f"{S.rs}"
-        )
-
-        time.sleep(speed)
-
-    _reset()
-
-
-# =========================================================
-# TYPE SHUFFLE
-# =========================================================
-
-def type_shuffle(
-    text,
-    speed=0.03,
-    color=C.c,
-    style=S.bd
-):
-    """
-    Glitch-like fake typing reveal.
-    """
-
-    chars = (
-        "abcdefghijklmnopqrstuvwxyz"
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        "0123456789"
-    )
-
-    for i in range(len(text)):
-
-        for _ in range(2):
-
-            fake = "".join(
-                random.choice(chars)
-                for _ in text
-            )
-
-            _flush(
-                f"{color}{style}{fake}{S.rs}"
-            )
-
-            time.sleep(speed)
-
-        _flush(
-            f"{color}{style}"
-            f"{text[:i+1]}"
-            f"{S.rs}"
-        )
-
-    _reset()
-
-
-# =========================================================
-# WAVE
-# =========================================================
-
-def wave(
-    text,
-    speed=0.1,
-    color=C.b,
-    style=S.bd
-):
-    """
-    Wave-like horizontal movement.
-    """
-
-    for i in range(len(text)):
-
-        _flush(
-            " " * i +
-            f"{color}{style}{text}{S.rs}"
-        )
-
-        time.sleep(speed)
-
-    _reset()
-
-
-# =========================================================
-# BLINK
-# =========================================================
-
-def blink(
-    text="READY",
-    times=5,
-    speed=0.3,
-    color=C.r,
-    style=S.bd
-):
-    """
-    Blinking text effect.
-    """
-
-    for _ in range(times):
-
-        _flush(
-            f"{color}{style}{text}{S.rs}"
-        )
-
-        time.sleep(speed)
-
-        _flush(" " * len(text))
-        time.sleep(speed)
-
-    _flush(
-        f"{color}{style}{text}{S.rs}\n"
-    )
-
-
-# =========================================================
-# ENERGY PULSE
-# =========================================================
-
-def energy_pulse(
-    text="SYSTEM",
-    cycles=10,
-    speed=0.05,
-    color=C.p,
-    style=S.bd
-):
-    """
-    Pulsing energy indicator effect.
-    """
+    colors = [C.r, C.y, C.g, C.c, C.b, C.m]
 
     for i in range(cycles):
+        c = colors[i % len(colors)]
 
-        glow = "●" * (i % 5)
+        # SOLO texto limpio (SIN color aplicado aquí)
+        frame = f"{text}"
 
-        _flush(
-            f"{color}{style}"
-            f"{text} {glow}"
-            f"{S.rs}"
-        )
+        # aplicar color o gradient correctamente
+        if gradient is not None:
+            out = gradient(f"{c}{frame}{S.rs}")  # híbrido seguro
+        elif color is not None:
+            out = f"{color}{frame}{S.rs}"
+        else:
+            out = frame
 
+        _flush(out)
         time.sleep(speed)
 
     _reset()
 
+# =============== TYPESHUFFLE ===============
 
-# =========================================================
-# SCANLINE
-# =========================================================
+def type_shuffle(text, speed=0.03,
+                 color=None, gradient=None):
 
-def scanline(
-    text="Scanning",
-    speed=0.05,
-    color=C.c,
-    style=S.bd
-):
-    """
-    Moving scan cursor effect.
-    """
+    chars = "abcdefghijklmnopqrstuvwxyz0123456789"
 
     for i in range(len(text)):
+        fake = "".join(random.choice(chars) for _ in text)
 
-        _flush(
-            f"{color}{style}"
-            f"{text[:i]}█"
-            f"{S.rs}"
-        )
+        _flush(_render(fake, color=color, gradient=gradient))
+        time.sleep(speed)
 
+        _flush(_render(text[:i+1], color=color, gradient=gradient))
+
+    _reset()
+
+# =============== WAVE ===============
+
+def wave(text, speed=0.1,
+         color=None, gradient=None):
+
+    for i in range(len(text)):
+        frame = " " * i + text
+        _flush(_render(frame, color=color, gradient=gradient))
         time.sleep(speed)
 
     _reset()
 
+# =============== BLINK ===============
 
-# =========================================================
-# GLITCH
-# =========================================================
+def blink(text="READY", times=5, speed=0.3,
+          color=None, gradient=None):
 
-def glitch(
-    text,
-    intensity=10,
-    speed=0.05,
-    color=C.r,
-    style=S.bd
-):
-    """
-    Random glitch distortion effect.
-    """
+    for _ in range(times):
+        _flush(_render(text, color=color, gradient=gradient))
+        time.sleep(speed)
+
+        _flush(_render(" " * len(text), color=color, gradient=gradient))
+        time.sleep(speed)
+
+    _flush(_render(text, color=color, gradient=gradient) + "\n")
+
+# =============== ENERGY PULSE ===============
+
+def energy_pulse(text="SYSTEM", cycles=10, speed=0.05,
+                 color=None, gradient=None):
+
+    icons = [I.circle, I.circle_dot, I.block]
+
+    for i in range(cycles):
+        glow = icons[i % len(icons)] * (i % 5)
+        frame = f"{text} {glow}"
+
+        _flush(_render(frame, color=color, gradient=gradient))
+        time.sleep(speed)
+
+    _reset()
+
+# =============== SCANLINE ===============
+
+def scanline(text="Scanning", speed=0.05,
+             color=None, gradient=None):
+
+    for i in range(len(text)):
+        frame = text[:i] + "█"
+        _flush(_render(frame, color=color, gradient=gradient))
+        time.sleep(speed)
+
+    _reset()
+
+# =============== GLITCH ===============
+
+def glitch(text, intensity=10, speed=0.05,
+           color=None, gradient=None):
 
     chars = "@#$%&*!?"
 
     for _ in range(intensity):
-
-        glitched = "".join(
-            c if random.random() > 0.3
-            else random.choice(chars)
+        out = "".join(
+            c if random.random() > 0.3 else random.choice(chars)
             for c in text
         )
 
-        _flush(
-            f"{color}{style}"
-            f"{glitched}"
-            f"{S.rs}"
-        )
-
+        _flush(_render(out, color=color, gradient=gradient))
         time.sleep(speed)
 
-    _flush(
-        f"{color}{style}{text}{S.rs}\n"
-    )
+    _flush(_render(text, color=color, gradient=gradient) + "\n")
 
-# =========================================================
-# NEW ANIMATIONS (v0.2.0)
-# =========================================================
+# =============== LOADING DOTS ===============
 
-# =========================================================
-# LOADING DOTS
-# =========================================================
-
-def loading_dots(
-    text="Loading",
-    cycles=6,
-    speed=0.4,
-    color=C.c,
-    style=S.bd
-):
-    """
-    Modern loading dots animation (like real apps).
-    """
+def loading_dots(text="Loading", cycles=6, speed=0.4,
+                 color=None, gradient=None):
 
     dots = ["", ".", "..", "..."]
 
     for _ in range(cycles):
         for d in dots:
-            _flush(
-                f"{color}{style}{text}{d}{S.rs}"
-            )
+            _flush(_render(text + d, color=color, gradient=gradient))
             time.sleep(speed)
 
     _reset()
 
+# =============== PROGRESS FILL ===============
 
-# =========================================================
-# PROGRESS FILL
-# =========================================================
-
-def progress_fill(
-    total=100,
-    width=40,
-    speed=0.02,
-    color=C.g,
-    style=S.bd,
-    label="Progress"
-):
-    """
-    Smooth progress bar with percentage.
-    """
+def progress_fill(total=100, width=40, speed=0.02,
+                  color=None, gradient=None, label="Progress"):
 
     for i in range(total + 1):
-
         percent = i / total
         filled = int(width * percent)
 
-        bar = "█" * filled + "░" * (width - filled)
+        bar = I.block * filled + I.light * (width - filled)
+        text = f"{label} [{bar}] {int(percent*100)}%"
 
-        _flush(
-            f"{color}{style}{label} [{bar}] {int(percent * 100)}%{S.rs}"
-        )
+        if gradient is not None and color is None:
+            out = gradient(text)
 
+        elif color is not None and gradient is None:
+            out = f"{color}{text}{S.rs}"
+
+        elif color is not None and gradient is not None:
+            out = gradient(f"{color}{text}{S.rs}")
+
+        else:
+            out = text
+
+        _flush(out)
         time.sleep(speed)
 
     _reset()
 
 
-# =========================================================
-# TYPING
-# =========================================================
+# =============== TYPING ===============
 
-def typing(
-    text,
-    speed=0.03,
-    color=C.w,
-    style=S.bd
-):
-    """
-    Realistic typing effect (like ChatGPT style).
-    """
+def typing(text, speed=0.03,
+           color=None, gradient=None):
 
+    out = ""
     for ch in text:
-        _flush(
-            f"{color}{style}{ch}{S.rs}"
-        )
+        out += ch
+        _flush(_render(out, color=color, gradient=gradient))
         time.sleep(speed)
 
     _reset()
 
+# =============== COUNTDOWN ===============
 
-# =========================================================
-# COUNTDOWN TIMER
-# =========================================================
-
-def countdown(
-    seconds=5,
-    color=C.y,
-    style=S.bd
-):
-    """
-    Simple countdown timer.
-    """
+def countdown(seconds=5,
+              color=None, gradient=None):
 
     for i in range(seconds, 0, -1):
-
-        _flush(
-            f"{color}{style}Starting in {i}...{S.rs}"
-        )
-
+        frame = f"Starting in {i}..."
+        _flush(_render(frame, color=color, gradient=gradient))
         time.sleep(1)
 
-    _flush(f"{color}{style}GO!{S.rs}\n")
+    _flush(_render("GO!", color=color, gradient=gradient) + "\n")
 
+# =============== SUCCESS CHECK ===============
 
-# =========================================================
-# SUCCESS CHECK ANIMATION
-# =========================================================
-
-def success_check(
-    text="Success",
-    speed=0.1,
-    color=C.g,
-    style=S.bd
-):
-    """
-    Animated success confirmation.
-    """
+def success_check(text="Success", speed=0.1,
+                  color=None, gradient=None):
 
     frames = ["[ ]", "[✓]", "[✓✓]"]
 
     for f in frames:
-        _flush(
-            f"{color}{style}{f} {text}{S.rs}"
-        )
+        frame = f"{f} {text}"
+        _flush(_render(frame, color=color, gradient=gradient))
         time.sleep(speed)
 
     _reset()
 
+# =============== LOADING BAR WAVE ===============
 
-# =========================================================
-# WAVE LOADING BAR
-# =========================================================
-
-def loading_bar_wave(
-    width=30,
-    cycles=20,
-    speed=0.05,
-    color=C.b,
-    style=S.bd
-):
-    """
-    Animated wave moving inside a loading bar.
-    """
+def loading_bar_wave(width=30, cycles=20, speed=0.05,
+                     color=None, gradient=None):
 
     for i in range(cycles):
+        bar = ["-"] * width
+        bar[i % width] = "█"
 
-        bar = list("-" * width)
+        frame = "[" + "".join(bar) + "]"
+        _flush(_render(frame, color=color, gradient=gradient))
+        time.sleep(speed)
 
-        pos = i % width
-        bar[pos] = "█"
+    _reset()
 
-        _flush(
-            f"{color}{style}[{''.join(bar)}]{S.rs}"
-        )
+# =========================================================
+# NEW ANIMATIONS (v0.3.0)
+# =========================================================
+
+# =============== SPINNER DOTS ===============
+
+def spinner_dots(text="Loading", duration=3, speed=0.2, color=None, gradient=None):
+    frames = get_anim("spinner_dots_frames")
+    end = time.time() + duration
+    i = 0
+
+    while time.time() < end:
+        txt = f"{frames[i % len(frames)]} {text}"
+        _flush(_render(txt, color=color, gradient=gradient))
+        time.sleep(speed)
+        i += 1
+
+    _reset()
+
+# =============== SPINNER BAR ===============
+
+def spinner_bar(text="Loading", duration=3, speed=0.1, color=None, gradient=None):
+    frames = get_anim("spinner_bar_frames")
+    gradient = gradient or get_anim("gradient_spinner_bar")
+
+    end = time.time() + duration
+    i = 0
+
+    while time.time() < end:
+        txt = f"{frames[i % len(frames)]} {text}"
+        _flush(_render(txt, color=color, gradient=gradient))
+        time.sleep(speed)
+        i += 1
+
+    _reset()
+
+# =============== LOADING BLOCKS ===============
+
+def loading_blocks(width=20, cycles=20, speed=0.05, color=None, gradient=None):
+    gradient = gradient or get_anim("gradient_loading_blocks")
+
+    for i in range(cycles):
+        bar = [I.light] * width
+        bar[i % width] = I.block
+
+        text = "".join(bar)
+        _flush(_render(text, color=color, gradient=gradient))
 
         time.sleep(speed)
 
     _reset()
+
+# =============== PULSE TEXT ===============
+
+def pulse_text(text="FULLUI", cycles=10, speed=0.1, color=None, gradient=None):
+    colors = get_anim("pulse_colors")
+
+    for i in range(cycles):
+        c = colors[i % len(colors)]
+
+        styled = f"{c}{S.bd}{text}{S.rs}"
+
+        _flush(_render(styled, color=None, gradient=gradient))
+        time.sleep(speed)
+
+    _reset()
+
+# =============== SCANNER ===============
+
+def scanner(width=30, cycles=15, speed=0.05, color=None, gradient=None):
+    gradient = gradient or get_anim("gradient_scanner")
+
+    for i in range(cycles):
+        line = [I.light] * width
+        pos = i % width
+        line[pos] = I.block
+
+        base = "".join(line[:pos]) + _render(line[pos], gradient=gradient) + "".join(line[pos+1:])
+
+        _flush(base)
+        time.sleep(speed)
+
+    _reset()
+
+# =============== REVERSE TYPE ===============
+
+def reverse_type(text, speed=0.05):
+    for i in range(len(text), 0, -1):
+        _flush(C.y + text[:i] + S.rs)
+        time.sleep(speed)
+    _reset()
+
+# =============== ICON SPIN ===============
+
+def icon_spin(icon=I.circle, cycles=20, speed=0.1):
+    frames = get_anim("icon_spin_frames")
+
+    for i in range(cycles):
+        _flush(f"{C.c}{frames[i%len(frames)]} {icon}{S.rs}")
+        time.sleep(speed)
+    _reset()
+
+# =============== GLITCH HEAVY ===============
+
+def glitch_heavy(text, cycles=15, speed=0.03):
+    chars = get_anim("glitch_heavy_chars")
+
+    for _ in range(cycles):
+        out = "".join(random.choice(chars) for _ in text)
+        _flush(C.r + out + S.rs)
+        time.sleep(speed)
+
+    _flush(C.g + text + S.rs + "\n")
+
+# =============== BAR WAVE COLOR ===============
+
+def bar_wave_color(width=30, cycles=30, speed=0.05):
+    for i in range(cycles):
+        bar = ""
+        for j in range(width):
+            if j == i % width:
+                bar += C.c + I.block
+            else:
+                bar += C.b + I.light
+        _flush(bar + S.rs)
+        time.sleep(speed)
+    _reset()
+
+# =============== SHAKE ===============
+
+def shake(text="ERROR", cycles=20, speed=0.03):
+    min_s, max_s = get_anim("shake_range")
+
+    for _ in range(cycles):
+        offset = random.randint(min_s, max_s)
+        _flush(" " * offset + C.r + text + S.rs)
+        time.sleep(speed)
+    _reset()
+
+# =============== FIRE TEX ===============
+
+def fire_text(text="FIRE", cycles=20, speed=0.05, color=None, gradient=None):
+    gradient = gradient or get_anim("gradient_fire")
+
+    for _ in range(cycles):
+        _flush(_render(text, color=color, gradient=gradient))
+        time.sleep(speed)
+
+    _reset()
+
+# =============== PROGRESS PING ===============
+
+def progress_ping(width=30, cycles=20, speed=0.05):
+    for i in range(cycles):
+        bar = [I.light]*width
+        bar[i % width] = I.circle
+        _flush(C.c + "".join(bar) + S.rs)
+        time.sleep(speed)
+    _reset()
+
+# =============== DOT MATRIX ===============
+
+def dot_matrix(width=20, height=5, cycles=20, speed=0.05):
+    for _ in range(cycles):
+        lines = []
+        for _ in range(height):
+            line = "".join(random.choice([I.dot, I.bullet]) for _ in range(width))
+            lines.append(line)
+        _flush("\n".join(lines))
+        time.sleep(speed)
+    _reset()
+
+# =============== SPIRAL ===============
+
+def spiral(text="Loading", cycles=20, speed=0.1):
+    frames = get_anim("spiral_frames")
+
+    for i in range(cycles):
+        _flush(f"{C.m}{frames[i%len(frames)]} {text}{S.rs}")
+        time.sleep(speed)
+    _reset()
+
+# =============== SUCCES BURST ===============
+
+def success_burst(text="SUCCESS", speed=0.1, color=None, gradient=None):
+    frames = get_anim("burst_icons")
+    gradient = gradient or get_anim("gradient_success")
+
+    for f in frames:
+        _flush(_render(f"{f} {text}", color=color, gradient=gradient))
+        time.sleep(speed)
+
+    _reset()
+
+# =========================================================
+# WRAPPER
+# =========================================================
+
+class A:
+    # =============== CORE ===============
+    spinner = spinner
+    dot_ripple = dot_ripple
+    bounce = bounce
+    matrix = matrix
+    fade_in = fade_in
+    pulse_bar = pulse_bar
+    type_shuffle = type_shuffle
+    wave = wave
+    blink = blink
+    energy = energy_pulse
+    scanline = scanline
+    glitch = glitch
+
+    loading_dots = loading_dots
+    progress_fill = progress_fill
+    typing = typing
+    countdown = countdown
+    success_check = success_check
+    loading_bar_wave = loading_bar_wave
+
+    # =============== SHORT ALIASES ===============
+
+    sp = spinner
+    dr = dot_ripple
+    bn = bounce
+    mx = matrix
+    fi = fade_in
+    pb = pulse_bar
+    ts = type_shuffle
+    wv = wave
+    bl = blink
+    en = energy_pulse
+    sc = scanline
+    gl = glitch
+
+    ld = loading_dots
+    pr = progress_fill
+    ty = typing
+    cd = countdown
+    ok = success_check
+    wb = loading_bar_wave
+
+    # =============== LONG ALIASES ===============
+    
+    dot = dot_ripple
+    fade = fade_in
+    bar = pulse_bar
+    shuffle = type_shuffle
+    scan = scanline
+    dots = loading_dots
+    progress = progress_fill
+    success = success_check
+    wavebar = loading_bar_wave
+
+    # =============== NEW (v0.3.0) ===============
+
+    spinner_dots = spinner_dots
+    spinner_bar = spinner_bar
+    loading_blocks = loading_blocks
+    pulse_text = pulse_text
+    scanner = scanner
+    reverse_type = reverse_type
+    icon_spin = icon_spin
+    glitch_heavy = glitch_heavy
+    bar_wave_color = bar_wave_color
+    shake = shake
+    fire_text = fire_text
+    progress_ping = progress_ping
+    dot_matrix = dot_matrix
+    spiral = spiral
+    success_burst = success_burst
+    
+    # =============== SHORT ALIASES (v0.3.0) ===============
+    
+    spd = spinner_dots
+    spb = spinner_bar
+    lb = loading_blocks
+    pt = pulse_text
+    sn = scanner
+    rt = reverse_type
+    isp = icon_spin
+    gh = glitch_heavy
+    bwc = bar_wave_color
+    sk = shake
+    ft = fire_text
+    pp = progress_ping
+    dm = dot_matrix
+    srl = spiral
+    sb = success_burst

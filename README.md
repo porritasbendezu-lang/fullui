@@ -13,6 +13,7 @@ experiences.
 -   🎨 ANSI + RGB color system
 -   🌈 Advanced gradients
 -   ✨ Text styling system
+-   🎯 Icons added
 -   🧱 Decorative boxes
 -   📝 Layout System
 -   🎮 Flexible alias-based system
@@ -24,15 +25,18 @@ experiences.
 
 ------------------------------------------------------------------------
 
-# 🆕 New in v0.2.4
+# 🆕 New in v0.3.0
 
 ## Improvements & Refinements
 
 -   Fixed some problems
--   Functions arranged in scripts
--   More flexible custom color gradients
+-   Gradients system (G)
+-   Icons add for system
 -   Internal optimizations
--   Functions implemented to create books and quizzes
+-   All features improved
+-   New animations
+-   The random color function was added
+-   New themes for festival and gradients
 
 ------------------------------------------------------------------------
 
@@ -128,14 +132,23 @@ elif choice is None:
 -   Layout system
 
 ``` python
-choice = book(
-    pages = [
-        "TEXT1"
-        "TEXT2"
-        "TEXT3"
-    ]
-    width= 60 
+pages = [
+    "FullUI es un sistema de interfaz para terminal basado en estilos, temas y animaciones.",
+    
+    "El sistema book() permite navegar páginas usando teclado sin necesidad de frameworks externos.",
+
+    "Cada página puede contener texto largo y el render se encarga del layout automáticamente.",
+
+    "FullUI combina colores, layouts y animaciones para crear experiencias CLI más vivas."
+]
+
+book(
+    pages=pages,
+    width=60
 )
+
+success("Fin del libro")
+pause()
 ```
 
 ------------------------------------------------------------------------
@@ -181,7 +194,7 @@ quiz(
 ``` python
 from fullui import *
 
-set_theme(NEON)
+setTheme(NEON)
 
 menu(
  t="Styled Menu",
@@ -192,12 +205,12 @@ menu(
 Custom:
 
 ``` python
-my_theme = create_theme(
+my_theme = createTheme(
     titleColor=C.r,
     inputColor=C.g
 )
 
-set_theme(my_theme)
+setTheme(my_theme)
 ```
 
 ------------------------------------------------------------------------
@@ -237,11 +250,13 @@ dashboard([
 
 ------------------------------------------------------------------------
 
-# 🎨 Colors
+# 🎨 Colors and Styles
 
 ``` python
 print(C.r+"Red"+S.rs)
 print(S.bd+"Bold"+S.rs)
+print(C.random+"Random Color"+S.rs)
+print(BG.b+"Backgrownd")
 ```
 
 ------------------------------------------------------------------------
@@ -250,6 +265,7 @@ print(S.bd+"Bold"+S.rs)
 
 ``` python
 print(rainbow("FULLUI"))
+print(G.fire+"This it a gradient text")
 ```
 
 ------------------------------------------------------------------------

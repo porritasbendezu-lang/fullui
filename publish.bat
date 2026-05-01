@@ -1,5 +1,5 @@
 @echo off
-set VERSION=0.2.4
+set VERSION=v0.2.4
 
 echo ============================
 echo  LIMPIANDO ARCHIVOS VIEJOS

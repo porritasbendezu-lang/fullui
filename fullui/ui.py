@@ -3,10 +3,10 @@ ui.py
 
 Core interface system for FULLUI.
 
-v0.2.3 ADDITIONS:
-- Book System
-- Quiz System
-- Add functions to colors.py and more
+v0.3.0 ADDITIONS:
+- Fix function p() to accept multiple arguments and keyword arguments, just like the built-in print().
+- Upgrade format for gradients
+- Bugs fixed
 """
 
 # =========================================================
@@ -14,8 +14,8 @@ v0.2.3 ADDITIONS:
 # =========================================================
 
 from fullui import *
-from .colors import C, S, BG
-from .themes import apply_theme, get_theme, set_theme
+from .colors import C, S, BG, G
+from .themes import applyTheme, getTheme, setTheme
 from .layouts import Panel, stack
 import textwrap
 import os
@@ -32,7 +32,7 @@ _ANIMATION_REGISTRY = {}
 # IDENTIFIERS (ALIAS SYSTEM)
 # =========================================================
 
-class I:
+class INFO:
     """
     Alias registry for FULLUI.
     Organized by system: Menu / Input / Quiz
@@ -172,10 +172,29 @@ class I:
     okr = "optionKeyRight"
     optionKeyRight = "optionKeyRight"
 
-    # reutiliza colores del sistema base
+    # re use system color
 
     rc = "resultColor"
     resultColor = "resultColor"
+
+# =========================================================
+# FUNCTION FOR GRADIENTS AND COLORS
+# =========================================================
+
+def render(text, icon=None, color=None, gradient=None):
+    # ICONO (I.*)
+    if icon:
+        text = f"{icon} {text}"
+
+    # GRADIENTE (G.*)
+    if gradient:
+        text = gradient(text)
+
+    # COLOR (C.*)
+    if color:
+        text = f"{color}{text}{S.rs}"
+
+    return text
 
 # =========================================================
 # UTILITIES
@@ -184,8 +203,8 @@ class I:
 line_break = "\n"
 lb = line_break
 
-def p(text):
-    print(text)
+def p(*args, **kwargs):
+    print(*args, **kwargs)
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -197,12 +216,15 @@ def pause(text="Press Enter for continue ...", colorText=C.m, style=S.bd):
 # HELPERS
 # =========================================================
 
+# =============== SUCCES ===============
+
 def success(text):
     """
     Success message style (green).
     """
     print(f"{C.g}{S.bd}✔︎  {text}{S.rs}")
 
+# =============== ERROR ===============
 
 def error(text):
     """
@@ -210,6 +232,7 @@ def error(text):
     """
     print(f"{C.r}{S.bd}✖︎  {text}{S.rs}")
 
+# =============== WARNING ===============
 
 def warning(text):
     """
@@ -217,12 +240,15 @@ def warning(text):
     """
     print(f"{C.y}{S.bd}⚠︎  {text}{S.rs}")
 
+# =============== INFO ===============
 
 def info(text):
     """
     Info message style (black).
     """
     print(f"{C.k}{S.bd}🖥  {text}{S.rs}")
+
+# =============== MESSAGE ===============
 
 def message(text, line, width=20, colorMessage = C.c, style = S.bd):
     """
@@ -238,6 +264,8 @@ def message(text, line, width=20, colorMessage = C.c, style = S.bd):
     
     print(f"{colorMessage}{style}{lineDown}{S.rs}".center(width))
 
+# =============== MINI TITLE ===============
+
 def miniTitle(text, color = C.m, style = S.bd):
     """
     Small styled title header.
@@ -248,39 +276,207 @@ def miniTitle(text, color = C.m, style = S.bd):
 # UI COMPONENTS
 # =========================================================
 
-def title(text="", margins="=", width=30, colorMargins=C.r, colorText=C.w, style=S.bd):
+# =============== TITLE ===============
+
+def title(
+    text="",
+    margins="=",
+    width=30,
+
+    colorMargins=C.r,
+    colorText=C.w,
+    style=S.bd,
+
+    icon=None,
+    color=None,
+
+    gradientMargins=None,
+    gradientText=None
+):
+
+    # TEXT
+    text = render(text, icon=icon, color=color, gradient=gradientText)
+
     line = margins * width
-    print(f"{colorMargins}{style}{line}{S.rs}")
+
+    # TOP MARGINS
+    if gradientMargins:
+        print(f"{gradientMargins(line)}{style}{S.rs}")
+    else:
+        print(f"{colorMargins}{style}{line}{S.rs}")
+
+    # TITLE
     print(f"{colorText}{style}{text.center(width)}{S.rs}")
-    print(f"{colorMargins}{style}{line}{S.rs}")
 
-def subtitle(text="", lines="-", numLines=10, width=30, color=C.w, style=S.it):
-    print(color + style + ((lines)*numLines + " " + text + " " + (lines)*numLines).center(width) + S.rs)
+    # BOTTOM MARGINS (IMPORTANTE: MISMO SISTEMA)
+    if gradientMargins:
+        print(f"{style}{gradientMargins(line)}{S.rs}")
+    else:
+        print(f"{colorMargins}{style}{line}{S.rs}")
 
-def option(text="", key1="[", key2="]", num=1, colorText=C.w, colorKeys=C.g, style=S.bd):
-    print(f"{colorKeys}{style}{key1}{num}{key2}{S.rs} {colorText}{text}{S.rs}")
+# =============== SUBTITLE ===============
 
-def opbreak(text="Salir", key1="[", key2="]", symbol="X", colorText=C.w, colorKeys=C.r, style=S.bd):
-    print(f"{colorKeys}{style}{key1}{symbol}{key2}{S.rs} {colorText}{text}{S.rs}")
+def subtitle(
+    text="",
+    lines="-",
+    numLines=10,
+    width=30,
+
+    color=C.w,
+    style=S.it,
+
+    icon=None,
+
+    gradientText=None,
+    gradientLines=None
+):
+
+    # TEXT LAYER
+    text = render(text, icon=icon, color=color, gradient=gradientText)
+
+    # LINES LAYER
+    line = lines * numLines
+
+    if gradientLines:
+        line = gradientLines(line)
+
+    # OUTPUT
+    print(
+        color
+        + style
+        + (line + " " + text + " " + line).center(width)
+        + S.rs
+    )
+
+# =============== OPTIONS ===============
+
+def option(
+    text="",
+    key1="[",
+    key2="]",
+    num=1,
+
+    colorText=C.w,
+    colorKeys=C.g,
+    style=S.bd,
+
+    icon=None,
+
+    gradient=None,   # 👈 SOLO UNO
+    color=None
+):
+
+    # TEXT LAYER
+    text = render(text, icon=icon, color=color, gradient=gradient)
+
+    # KEYS LAYER
+    keys = f"{key1}{num}{key2}"
+
+    if gradient:
+        keys = gradient(keys)
+
+    # OUTPUT (UNIFIED LOOK)
+    print(
+        f"{colorKeys}{style}{keys}{S.rs} "
+        f"{colorText}{text}{S.rs}"
+    )
+
+# =============== BREAK OPTION ===============
+
+def opbreak(
+    text="Salir",
+    key1="[",
+    key2="]",
+    symbol="X",
+
+    colorText=C.w,
+    colorKeys=C.r,
+    style=S.bd,
+
+    icon=None,
+
+    gradient=None
+):
+
+    text = render(text, icon=icon, color=colorText, gradient=gradient)
+
+    keys = f"{key1}{symbol}{key2}"
+
+    if gradient:
+        keys = gradient(keys)
+
+    print(
+        f"{colorKeys}{style}{keys}{S.rs} "
+        f"{colorText}{text}{S.rs}"
+    )
+
+# =============== INPUT ===============
+
+def uinput(
+    prompt="> ",
+    text="",
+
+    icon=None,
+
+    colorPrompt=C.c,
+    colorText=C.w,
+
+    style=S.bd,
+
+    gradientPrompt=None,
+    gradientText=None,
+
+    clear_prompt=False
+):
+    """
+    FULLUI input system (100% editable)
+    """
+
+    # =============== PROMPT LAYER ===============
+    prompt_render = prompt
+
+    if icon:
+        prompt_render = f"{icon} {prompt_render}"
+
+    if gradientPrompt:
+        prompt_render = gradientPrompt(prompt_render)
+
+    prompt_render = f"{colorPrompt}{style}{prompt_render}{S.rs}"
+
+    # =============== INPUT LAYER ===============
+    user_input = input(prompt_render)
+
+    if clear_prompt:
+        print("\033[F\033[K", end="")
+
+    # =============== TEXT POST PROCESS ===============
+    result = user_input
+
+    if gradientText:
+        result = gradientText(result)
+
+    result = f"{colorText}{style}{result}{S.rs}"
+
+    return user_input
 
 # =========================================================
 # REGISTRY SYSTEM (v0.2.0)
 # =========================================================
 
-def register_theme(name, theme):
+def registerTheme(name, theme):
     _THEME_REGISTRY[name] = theme
 
-def register_color(name, value):
+def registerColor(name, value):
     _COLOR_REGISTRY[name] = value
 
-def register_animation(name, func):
+def registerAnim(name, func):
     _ANIMATION_REGISTRY[name] = func
 
 # =========================================================
 # SYSTEM PANEL (DEV TOOL)
 # =========================================================
 
-def system_panel():
+def systemPanel():
     """
     FULLUI Developer Panel
     """
@@ -346,7 +542,7 @@ def themes_manager():
 
         choice = menu(
             t="THEMES MANAGER",
-            st=f"Active: {get_theme().name}",
+            st=f"Active: {getTheme().name}",
             op=[t.name for t in themes],
             bt="Back",
             bs="X"
@@ -389,7 +585,7 @@ def themes_manager():
                 break
 
             if preview_choice == 1:
-                set_theme(selected)
+                setTheme(selected)
                 menu(
                     t="SUCCESS",
                     st=f"{selected.name} applied!",
@@ -515,7 +711,7 @@ def system_info():
     clear()
     title("SYSTEM INFO")
 
-    print(C.c + "Theme:" + S.rs, get_theme().name)
+    print(C.c + "Theme:" + S.rs, getTheme().name)
     print(C.c + "Version:" + S.rs, "0.2.0")
 
     pause()
@@ -581,41 +777,63 @@ def book(pages, width=60):
 def menu(**kwargs):
 
     alias_map = {
+        # ========== CORE ==========
         "t": "titleText",
         "st": "subtitleText",
         "op": "options",
+
+        # ========== VISIBILITY ==========
         "sT": "showTitle",
         "sST": "showSubtitle",
+        "sB": "showBreak",
+
+        # ========== TITLE ==========
         "tm": "titleMargins",
         "tw": "titleWidth",
         "tcm": "titleColorMargins",
         "tct": "titleColorText",
         "ts": "titleStyle",
+        "tg": "titleGradient",
+        "tgm": "titleGradientMargins",
+
+        # ========== SUBTITLE ==========
         "sl": "subtitleLines",
         "snl": "subtitleNumberLines",
         "sw": "subtitleWidth",
         "sc": "subtitleColor",
         "ss": "subtitleStyle",
+        "sg": "subtitleGradient",
+
+        # ========== OPTIONS ==========
         "k1": "key1",
         "k2": "key2",
         "oct": "optionsColorText",
         "ock": "optionsColorKeys",
         "os": "optionsStyle",
-        "sB": "showBreak",
+        "og": "optionsGradient",
+
+        # ========== BREAK ==========
         "bt": "breakText",
         "bs": "breakSymbol",
         "bct": "breakColorText",
         "bck": "breakColorKeys",
         "bst": "breakStyle",
+        "bg": "breakGradient",
+
+        # ========== INPUT ==========
         "ic": "inputColor",
         "isty": "inputStyle",
         "p": "prompt",
+        "ig": "inputGradient",
+        "ii": "inputIcon",
+
+        # ========== INVALID ==========
         "io": "invalidOption",
         "ioc": "invalidOptionColor"
     }
 
     normalized = {alias_map.get(k, k): v for k, v in kwargs.items()}
-    normalized = apply_theme(normalized)
+    normalized = applyTheme(normalized)
 
     while True:
         clear()
@@ -623,20 +841,20 @@ def menu(**kwargs):
         options = normalized.get("options", [])
         breakSymbol = normalized.get("breakSymbol", "X")
 
-        # =============== TITLE ===============
-
+        # ================= TITLE =================
         if normalized.get("showTitle", True):
             title(
                 normalized.get("titleText", ""),
                 normalized.get("titleMargins", "="),
                 normalized.get("titleWidth", 30),
-                normalized.get("titleColorMargins", C.r),  # ✅ FIX
+                normalized.get("titleColorMargins", C.r),
                 normalized.get("titleColorText", C.w),
-                normalized.get("titleStyle", S.bd)
+                normalized.get("titleStyle", S.bd),
+                gradientMargins=normalized.get("titleGradientMargins", None),
+                gradientText=normalized.get("titleGradient", None)
             )
 
-        # =============== SUBTITLE ===============
-
+        # ================= SUBTITLE =================
         if normalized.get("showSubtitle", True) and normalized.get("subtitleText"):
             subtitle(
                 normalized.get("subtitleText", ""),
@@ -644,13 +862,13 @@ def menu(**kwargs):
                 normalized.get("subtitleNumberLines", 5),
                 normalized.get("subtitleWidth", 30),
                 normalized.get("subtitleColor", C.w),
-                normalized.get("subtitleStyle", S.it)
+                normalized.get("subtitleStyle", S.it),
+                gradientText=normalized.get("subtitleGradient", None)
             )
 
         print()
 
-        # =============== OPTIONS ===============
-
+        # ================= OPTIONS =================
         for i, opt in enumerate(options, 1):
             option(
                 opt,
@@ -659,11 +877,13 @@ def menu(**kwargs):
                 i,
                 normalized.get("optionsColorText", C.w),
                 normalized.get("optionsColorKeys", C.g),
-                normalized.get("optionsStyle", S.bd)
+                normalized.get("optionsStyle", S.bd),
+
+                # 🔥 UN SOLO GRADIENT PARA TODO (keys + text)
+                gradient=normalized.get("optionsGradient", None)
             )
 
-        # =============== BREAK ===============
-
+        # ================= BREAK =================
         if normalized.get("showBreak", True):
             print()
             opbreak(
@@ -673,20 +893,25 @@ def menu(**kwargs):
                 breakSymbol,
                 normalized.get("breakColorText", C.w),
                 normalized.get("breakColorKeys", C.r),
-                normalized.get("breakStyle", S.bd)
+                normalized.get("breakStyle", S.bd),
+                gradient=normalized.get("breakGradient", None)
             )
 
-        # =============== INPUT ===============
-
-        choice = input(
-            f"{normalized.get('inputColor', C.c)}"
-            f"{normalized.get('inputStyle', S.bd)}\n"
-            f"{normalized.get('prompt', '> ')}{S.rs}"
+        # ================= INPUT =================
+        choice = uinput(
+            prompt=normalized.get("prompt", "> "),
+            icon=normalized.get("inputIcon", None),
+            colorPrompt=normalized.get("inputColor", C.c),
+            style=normalized.get("inputStyle", S.bd),
+            gradientPrompt=normalized.get("inputGradient", None),
+            clear_prompt=False
         )
 
+        # ================= BREAK CHECK =================
         if normalized.get("showBreak", True) and choice.lower() == breakSymbol.lower():
             return None
 
+        # ================= VALIDATION =================
         if choice.isdigit():
             n = int(choice)
             if 1 <= n <= len(options):
@@ -694,23 +919,23 @@ def menu(**kwargs):
 
         print(
             f"{normalized.get('invalidOptionColor', C.r)}"
-            f"{normalized.get('invalidOption', "Opcion incorrecta")}{S.rs}"
-            )
+            f"{normalized.get('invalidOption', 'Opcion incorrecta')}{S.rs}"
+        )
         pause()
 
 # =========================================================
 # MAIN QUIZ UI
 # =========================================================
 
-def quiz_title(text="", margins="=", width=30, colorMargins=C.r, colorText=C.w, style=S.bd):
+def titleQuiz(text="", margins="=", width=30, colorMargins=C.r, colorText=C.w, style=S.bd):
     line = margins * width
     print(f"{colorText}{style}{text.center(width)}{S.rs}")
     print(f"{colorMargins}{style}{line}{S.rs}")
 
-def quiz_question(text, color=C.w, style=S.bd):
+def question(text, color=C.w, style=S.bd):
     print(f"\n{color}{style}{text}{S.rs}\n")
 
-def quiz_option(text, num, keyL="(", keyR=")", colorKey=C.y, colorText=C.w, style=S.bd):
+def answers(text, num, keyL="(", keyR=")", colorKey=C.y, colorText=C.w, style=S.bd):
     print(f"{colorKey}{style}{keyL}{num}{keyR}{S.rs} {colorText}{text}{S.rs}")
 
 
@@ -720,7 +945,7 @@ def quiz_option(text, num, keyL="(", keyR=")", colorKey=C.y, colorText=C.w, styl
 
 def quiz(**kwargs):
 
-    theme = get_theme()
+    theme = getTheme()
     
     alias_map = {
         "t": "titleText",
@@ -753,7 +978,7 @@ def quiz(**kwargs):
     }
 
     normalized = {alias_map.get(k, k): v for k, v in kwargs.items()}
-    normalized = apply_theme(normalized)
+    normalized = applyTheme(normalized)
 
     question = normalized.get("question", [])
 
@@ -768,7 +993,7 @@ def quiz(**kwargs):
             clear()
 
             if normalized.get("showTitle", True):
-                quiz_title(
+                titleQuiz(
                     normalized.get("titleText", ""),
                     normalized.get("titleMargins", "="),
                     normalized.get("titleWidth", 30),
@@ -779,13 +1004,13 @@ def quiz(**kwargs):
 
             print(f"{theme.titleColorMargins}Pregunta {idx}/{len(question)}{S.rs}")
 
-            quiz_question(
+            question(
                 q["question"],
                 color=normalized.get("questionColor", theme.subtitleColor)
             )
 
             for i, opt in enumerate(q["options"], 1):
-                quiz_option(
+                answers(
                     opt,
                     i,
                     normalized.get("optionKeyLeft", "("),

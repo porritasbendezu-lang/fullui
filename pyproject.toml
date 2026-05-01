@@ -5,84 +5,97 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fullui"
-version = "0.2.4"
+version = "0.3.0"
 
 description = "Advanced console UI framework for Python with colors, layouts, animations, themes, developer tools and interactive menus"
 
-readme = {file="README.md", content-type="text/markdown"}
+readme = "README.md"
 
 requires-python = ">=3.8"
 
-license = {text="MIT"}
+license = {text = "MIT"}
 
 authors = [
- {name="Leonardo Farid Porras Bendezu", email="porritasbendezu@gmail.com"}
+    {name = "Leonardo Farid Porras Bendezu", email = "porritasbendezu@gmail.com"}
 ]
 
 maintainers = [
- {name="Leonardo Farid Porras Bendezu", email="porritasbendezu@gmail.com"}
+    {name = "Leonardo Farid Porras Bendezu", email = "porritasbendezu@gmail.com"}
 ]
-
 
 keywords = [
-"cli",
-"ui",
-"console",
-"terminal",
-"ansi",
-"colors",
-"menus",
-"books",
-"quizzes",
-"tui",
-"framework",
-"animations",
-"themes",
-"layouts",
-"panels",
-"dashboard",
-"widgets",
-"ascii-layouts",
-"developer-tools",
-"terminal-games",
-"interactive-cli"
+    "cli",
+    "ui",
+    "console",
+    "terminal",
+    "ansi",
+    "colors",
+    "menus",
+    "books",
+    "quizzes",
+    "tui",
+    "framework",
+    "animations",
+    "themes",
+    "layouts",
+    "panels",
+    "dashboard",
+    "widgets",
+    "ascii-layouts",
+    "developer-tools",
+    "terminal-games",
+    "interactive-cli"
 ]
-
 
 classifiers = [
-"Development Status :: 4 - Beta",
+    "Development Status :: 4 - Beta",
 
-"Programming Language :: Python :: 3",
-"Programming Language :: Python :: 3 :: Only",
-"Programming Language :: Python :: 3.8",
-"Programming Language :: Python :: 3.9",
-"Programming Language :: Python :: 3.10",
-"Programming Language :: Python :: 3.11",
-"Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 
-"License :: OSI Approved :: MIT License",
-"Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
 
-"Environment :: Console",
+    "Environment :: Console",
 
-"Intended Audience :: Developers",
-"Intended Audience :: Education",
-"Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: End Users/Desktop",
 
-"Topic :: Software Development :: Libraries",
-"Topic :: Software Development :: User Interfaces",
-"Topic :: Software Development :: Libraries :: Python Modules",
-"Topic :: Terminals"
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: User Interfaces",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Terminals",
+
+    "Typing :: Typed"
+]
+
+dependencies = [
+    "colorama>=0.4.6"
 ]
 
 
-dependencies = [
-"colorama>=0.4.6"
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "build>=1.2",
+    "twine>=5",
+    "ruff>=0.5"
+]
+
+docs = [
+    "mkdocs",
+    "mkdocs-material"
 ]
 
 
 [project.scripts]
-fullui-demo = "fullui:banner"
+fullui-demo = "fullui.ui:banner"
 
 
 [project.urls]
@@ -95,6 +108,7 @@ Changelog = "https://github.com/porritasbendezu-lang/fullui/releases"
 
 [tool.setuptools]
 include-package-data = true
+zip-safe = false
 
 
 [tool.setuptools.packages.find]
@@ -104,17 +118,3 @@ include = ["fullui*"]
 
 [tool.setuptools.package-data]
 fullui = ["py.typed"]
-
-
-[project.optional-dependencies]
-dev = [
-"pytest>=8",
-"build>=1.2",
-"twine>=5",
-"ruff>=0.5"
-]
-
-docs = [
-"mkdocs",
-"mkdocs-material"
-]
