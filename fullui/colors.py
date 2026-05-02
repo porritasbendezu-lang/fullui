@@ -4,10 +4,8 @@ colors.py
 ANSI color system, background colors, styles, helpers and utilities
 for terminal UI applications.
 
-v0.3.0 ADDITIONS:
-- Random colors
-- Gradients that accept both RGB and ANSI colors as start/end points
-- New gradient presets "G"
+v0.3.1 ADDITIONS:
+- There were no changes
 """
 
 # =========================================================

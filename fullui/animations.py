@@ -3,11 +3,8 @@ animations.py
 
 Animated effects for terminal interfaces.
 
-v0.3.0 ADDITIONS:
-- Icons (I)
-- Gradients (G)
-- Bug fixes
-- Better rendering
+v0.3.1 ADDITIONS:
+- Fix color handling in pulse_text
 """
 
 # =========================================================
@@ -28,7 +25,7 @@ except ImportError:
     from icons import I
 
 # =========================================================
-# REDER
+# RENDER
 # =========================================================
 
 def _render(text, color=None, gradient=None):
@@ -211,16 +208,16 @@ def pulse_bar(text="FULLUI", cycles=10, speed=0.1,
     for i in range(cycles):
         c = colors[i % len(colors)]
 
-        # SOLO texto limpio (SIN color aplicado aquí)
-        frame = f"{text}"
+        frame = text
 
-        # aplicar color o gradient correctamente
         if gradient is not None:
-            out = gradient(f"{c}{frame}{S.rs}")  # híbrido seguro
-        elif color is not None:
-            out = f"{color}{frame}{S.rs}"
+            out = gradient(frame)
+
+        elif color is None:
+            out = f"{c}{frame}{S.rs}"
+
         else:
-            out = frame
+            out = f"{color}{frame}{S.rs}"
 
         _flush(out)
         time.sleep(speed)
@@ -390,7 +387,7 @@ def countdown(seconds=5,
 def success_check(text="Success", speed=0.1,
                   color=None, gradient=None):
 
-    frames = ["[ ]", "[✓]", "[✓✓]"]
+    frames = ["[ ]", "[✓]", "[✓✓]", "[✓✓✓]"]
 
     for f in frames:
         frame = f"{f} {text}"
@@ -555,11 +552,20 @@ def shake(text="ERROR", cycles=20, speed=0.03):
 
 # =============== FIRE TEX ===============
 
-def fire_text(text="FIRE", cycles=20, speed=0.05, color=None, gradient=None):
-    gradient = gradient or get_anim("gradient_fire")
+def fire_text(text="FIRE", cycles=20, speed=0.05):
 
-    for _ in range(cycles):
-        _flush(_render(text, color=color, gradient=gradient))
+    fire_colors = [C.r, C.y, C.r, C.m]
+
+    for i in range(cycles):
+        colored = ""
+
+        for j, ch in enumerate(text):
+            c = fire_colors[(i + j) % len(fire_colors)]
+            colored += f"{c}{ch}"
+
+        colored += S.rs
+
+        _flush(colored)
         time.sleep(speed)
 
     _reset()

@@ -25,18 +25,14 @@ experiences.
 
 ------------------------------------------------------------------------
 
-# 🆕 New in v0.3.0
+# 🆕 New in v0.3.1
 
-## Improvements & Refinements
+## Improved guide for FULLUI info
 
+-   Gide system added from FULLUI
 -   Fixed some problems
--   Gradients system (G)
--   Icons add for system
--   Internal optimizations
--   All features improved
--   New animations
--   The random color function was added
--   New themes for festival and gradients
+-   Themes for all UI styles
+-   Icons more clean
 
 ------------------------------------------------------------------------
 

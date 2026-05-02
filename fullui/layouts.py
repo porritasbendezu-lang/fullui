@@ -3,6 +3,9 @@ layouts.py
 
 Layout system for FULLUI.
 Fully customizable + Layout Presets + Compatibility safe.
+
+v0.3.1 ADDITIONS:
+- There were no changes
 """
 
 # =========================================================
@@ -107,7 +110,7 @@ class Panel:
         out.append(self.color + self.theme.titleStyle + top + S.rs)
 
         if self.title:
-            title = self.title[:inner]  # evita overflow
+            title = self.title[:inner]
             pad_total = inner - len(title)
             pad_left = pad_total // 2
             pad_right = pad_total - pad_left

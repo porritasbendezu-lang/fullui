@@ -5,6 +5,7 @@ setup.py
 fullui/__init__.py
 fullui/animations.py
 fullui/colors.py
+fullui/gide.py
 fullui/icons.py
 fullui/layouts.py
 fullui/themes.py

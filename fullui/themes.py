@@ -10,10 +10,8 @@ Allows customization of UI appearance such as:
 
 Designed to be lightweight and easily extendable.
 
-v0.3.0 ADDITIONS:
-- Festival themes added
-- Gradients themes added
-- Better system of themes
+v0.3.1 ADDITIONS:
+- There were no changes
 """
 
 # =========================================================

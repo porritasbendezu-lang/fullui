@@ -7,7 +7,7 @@ Advanced console UI system for Python terminals.
 # VERSION
 # =========================================================
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 
 # =========================================================
 # WINDOWS ANSI SUPPORT
@@ -29,6 +29,7 @@ from . import animations
 from . import themes
 from . import layouts
 from . import icons
+from . import gide
 
 # =========================================================
 # FULLUI BANNER
@@ -66,7 +67,7 @@ panel("Welcome", t="HOME")
 menu(t="Main Menu", op=["Play","Exit"])
 
 {C.m}Developer Tools:{S.rs}
-systemPanel()
+gideFULLUI()
 
 {C.c}GitHub:{S.rs}
 github.com/porritasbendezu-lang/fullui
@@ -104,9 +105,6 @@ from .ui import (
     menu, title, subtitle, option, opbreak, uinput,
     success, error, warning, info, message, miniTitle,
     p, clear, pause, line_break, lb,
-    systemPanel, themes_manager, animations_preview,
-    system_info, registry_inspector,
-    registerTheme, registerColor, registerAnim
 )
 
 # =========================================================
@@ -188,7 +186,19 @@ from .themes import (
     EASTER, NEW_YEAR, BIRTHDAY, CARNIVAL, INDEPENDENCE,
     SPRING_FEST, WINTER_FEST, OKTOBERFEST, DIWALI,
     FIRE_STORM, ICE_NEON, CYBER_VOID, FOREST_LIGHT, COSMIC_GOLD,
+    CYBER_NEON, TOXIC_WASTE, BLOOD_MOON, DEEP_OCEAN, SUNCORE,
+    ROYAL_LUX, STEEL_CORE, PINK_VIBE, NIGHT_GLITCH, AURORA, 
     setTheme, getTheme, applyTheme, createTheme
+)
+
+# =========================================================
+# PUBLIC API - GIDE
+# =========================================================
+
+from .gide import (
+    gideFULLUI, registerColor, registerAnim, registerTheme,
+    registrInspector, infoSystem, uiSystem, animationSystem,
+    iconSystem, layoutSystem, themeSystem, colorSystem
 )
 
 # =========================================================
@@ -217,9 +227,6 @@ __all__ = [
     "success","error","warning","info","message","miniTitle",
     "menu","title","subtitle","option","opbreak","uinput",
     "p","clear","pause","line_break","lb",
-    "systemPanel","themes_manager","animations_preview",
-    "system_info","registry_inspector",
-    "registerTheme","registerColor","registerAnim",
 
     # LAYOUTS
     "Panel","panel",
@@ -253,5 +260,12 @@ __all__ = [
     "EASTER","NEW_YEAR","BIRTHDAY","CARNIVAL","INDEPENDENCE",
     "SPRING_FEST","WINTER_FEST","OKTOBERFEST","DIWALI",
     "FIRE_STORM", "ICE_NEON", "CYBER_VOID", "FOREST_LIGHT", "COSMIC_GOLD",
+    "CYBER_NEON", "TOXIC_WASTE", "BLOOD_MOON", "DEEP_OCEAN", "SUNCORE",
+    "ROYAL_LUX", "STEEL_CORE", "PINK_VIBE", "NIGHT_GLITCH", "AURORA",
     "setTheme","getTheme","applyTheme","createTheme",
+    
+    # GIDE
+    "gideFULLUI", "registerColor", "registerAnim", "registerTheme",
+    "registrInspector", "infoSystem", "uiSystem", "animationSystem",
+    "iconSystem", "layoutSystem", "themeSystem", "colorSystem"
 ]

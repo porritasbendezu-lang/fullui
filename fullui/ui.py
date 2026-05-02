@@ -3,10 +3,9 @@ ui.py
 
 Core interface system for FULLUI.
 
-v0.3.0 ADDITIONS:
-- Fix function p() to accept multiple arguments and keyword arguments, just like the built-in print().
-- Upgrade format for gradients
-- Bugs fixed
+v0.3.1 ADDITIONS:
+- Gradient support for all components (title, subtitle, options, break, input)
+- Theme system for global styling and easy customization
 """
 
 # =========================================================
@@ -19,14 +18,6 @@ from .themes import applyTheme, getTheme, setTheme
 from .layouts import Panel, stack
 import textwrap
 import os
-
-# =========================================================
-# INTERNAL REGISTRY (v0.2.0)
-# =========================================================
-
-_THEME_REGISTRY = {}
-_COLOR_REGISTRY = {}
-_ANIMATION_REGISTRY = {}
 
 # =========================================================
 # IDENTIFIERS (ALIAS SYSTEM)
@@ -283,9 +274,9 @@ def title(
     margins="=",
     width=30,
 
-    colorMargins=C.r,
-    colorText=C.w,
-    style=S.bd,
+    colorMargins=None,
+    colorText=None,
+    style=None,
 
     icon=None,
     color=None,
@@ -293,6 +284,13 @@ def title(
     gradientMargins=None,
     gradientText=None
 ):
+    theme = getTheme()
+
+    colorMargins = colorMargins or theme.titleColorMargins
+    colorText = colorText or theme.titleColor
+    style = style or theme.titleStyle
+    gradientMargins = gradientMargins or theme.titleGradientMargins
+    gradientText = gradientText or theme.titleGradient
 
     # TEXT
     text = render(text, icon=icon, color=color, gradient=gradientText)
@@ -308,7 +306,7 @@ def title(
     # TITLE
     print(f"{colorText}{style}{text.center(width)}{S.rs}")
 
-    # BOTTOM MARGINS (IMPORTANTE: MISMO SISTEMA)
+    # BOTTOM MARGINS
     if gradientMargins:
         print(f"{style}{gradientMargins(line)}{S.rs}")
     else:
@@ -322,25 +320,27 @@ def subtitle(
     numLines=10,
     width=30,
 
-    color=C.w,
-    style=S.it,
+    color=None,
+    style=None,
 
     icon=None,
 
     gradientText=None,
     gradientLines=None
 ):
+    theme = getTheme()
 
-    # TEXT LAYER
+    color = color or theme.subtitleColor
+    style = style or theme.subtitleStyle
+    gradientText = gradientText or theme.subtitleGradient
+
     text = render(text, icon=icon, color=color, gradient=gradientText)
 
-    # LINES LAYER
     line = lines * numLines
 
     if gradientLines:
         line = gradientLines(line)
 
-    # OUTPUT
     print(
         color
         + style
@@ -356,26 +356,29 @@ def option(
     key2="]",
     num=1,
 
-    colorText=C.w,
-    colorKeys=C.g,
-    style=S.bd,
+    colorText=None,
+    colorKeys=None,
+    style=None,
 
     icon=None,
 
-    gradient=None,   # 👈 SOLO UNO
+    gradient=None,
     color=None
 ):
+    theme = getTheme()
 
-    # TEXT LAYER
+    colorText = colorText or theme.optionColor
+    colorKeys = colorKeys or theme.optionKeyColor
+    style = style or theme.optionStyle
+    gradient = gradient or theme.optionGradient
+
     text = render(text, icon=icon, color=color, gradient=gradient)
 
-    # KEYS LAYER
     keys = f"{key1}{num}{key2}"
 
     if gradient:
         keys = gradient(keys)
 
-    # OUTPUT (UNIFIED LOOK)
     print(
         f"{colorKeys}{style}{keys}{S.rs} "
         f"{colorText}{text}{S.rs}"
@@ -389,14 +392,20 @@ def opbreak(
     key2="]",
     symbol="X",
 
-    colorText=C.w,
-    colorKeys=C.r,
-    style=S.bd,
+    colorText=None,
+    colorKeys=None,
+    style=None,
 
     icon=None,
 
     gradient=None
 ):
+    theme = getTheme()
+
+    colorText = colorText or theme.breakColor
+    colorKeys = colorKeys or theme.breakKeyColor
+    style = style or theme.breakStyle
+    gradient = gradient or theme.breakGradient
 
     text = render(text, icon=icon, color=colorText, gradient=gradient)
 
@@ -418,21 +427,24 @@ def uinput(
 
     icon=None,
 
-    colorPrompt=C.c,
-    colorText=C.w,
+    colorPrompt=None,
+    colorText=None,
 
-    style=S.bd,
+    style=None,
 
     gradientPrompt=None,
     gradientText=None,
 
     clear_prompt=False
 ):
-    """
-    FULLUI input system (100% editable)
-    """
+    theme = getTheme()
 
-    # =============== PROMPT LAYER ===============
+    colorPrompt = colorPrompt or theme.inputColor
+    colorText = colorText or theme.textColor
+    style = style or theme.inputStyle
+    gradientPrompt = gradientPrompt or theme.inputGradient
+    gradientText = gradientText or theme.inputGradient
+
     prompt_render = prompt
 
     if icon:
@@ -443,13 +455,11 @@ def uinput(
 
     prompt_render = f"{colorPrompt}{style}{prompt_render}{S.rs}"
 
-    # =============== INPUT LAYER ===============
     user_input = input(prompt_render)
 
     if clear_prompt:
         print("\033[F\033[K", end="")
 
-    # =============== TEXT POST PROCESS ===============
     result = user_input
 
     if gradientText:
@@ -458,263 +468,6 @@ def uinput(
     result = f"{colorText}{style}{result}{S.rs}"
 
     return user_input
-
-# =========================================================
-# REGISTRY SYSTEM (v0.2.0)
-# =========================================================
-
-def registerTheme(name, theme):
-    _THEME_REGISTRY[name] = theme
-
-def registerColor(name, value):
-    _COLOR_REGISTRY[name] = value
-
-def registerAnim(name, func):
-    _ANIMATION_REGISTRY[name] = func
-
-# =========================================================
-# SYSTEM PANEL (DEV TOOL)
-# =========================================================
-
-def systemPanel():
-    """
-    FULLUI Developer Panel
-    """
-
-    while True:
-        choice = menu(
-            t="FULLUI SYSTEM PANEL",
-            st="Developer Tools",
-            op=[
-                "Themes Manager",
-                "Colors Inspector",
-                "Animations Preview",
-                "System Info",
-                "Registry Inspector"
-            ],
-            bt="Exit Debug",
-            bs="X"
-        )
-
-        if choice == 1:
-            themes_manager()
-        elif choice == 2:
-            show_colors()
-        elif choice == 3:
-            animations_preview()
-        elif choice == 4:
-            system_info()
-        elif choice == 5:
-            registry_inspector()
-        elif choice is None:
-            break
-
-# =========================================================
-# THEMES MANAGER
-# =========================================================
-
-def themes_manager():
-    from .themes import (
-        DEFAULT, DARK, NEON, FIRE, ICE,
-        HACKER, VOID, ELECTRIC, NIGHT,
-        ALERT, FROST, NATURE, DEV, GAMER, BRUTAL,
-        SUNSET, OCEAN, FOREST, CYBERPUNK, LAVENDER,
-        GOLD, ROSE, MIDNIGHT, EMBER, MINT,
-        CRIMSON_GOLD, AQUA_LIME, PURPLE_PINK, 
-        BLUE_ORANGE, EMERALD_GOLD, RED_BLACK, SKY_PURPLE, 
-        MANGO_FIRE, TEAL_ROSE, INDIGO_CYAN
-    )
-
-    themes = [
-        DEFAULT, DARK, NEON, FIRE, ICE,
-        HACKER, VOID, ELECTRIC, NIGHT,
-        ALERT, FROST, NATURE, DEV, GAMER, BRUTAL,
-        SUNSET, OCEAN, FOREST, CYBERPUNK, LAVENDER,
-        GOLD, ROSE, MIDNIGHT, EMBER, MINT,
-        CRIMSON_GOLD, AQUA_LIME, PURPLE_PINK, 
-        BLUE_ORANGE, EMERALD_GOLD, RED_BLACK, SKY_PURPLE, 
-        MANGO_FIRE, TEAL_ROSE, INDIGO_CYAN
-    ] + list(_THEME_REGISTRY.values())
-
-    while True:
-        
-        # =============== THEMES MENU ===============
-
-        choice = menu(
-            t="THEMES MANAGER",
-            st=f"Active: {getTheme().name}",
-            op=[t.name for t in themes],
-            bt="Back",
-            bs="X"
-        )
-
-        if choice is None:
-            return
-
-        selected = themes[choice - 1]
-
-        # =============== PREVIEW THEMES ===============
-
-        while True:
-            preview_choice = menu(
-                t="THEME PREVIEW",
-                st=f"Preview: {selected.name}",
-                op=[
-                    "Apply Theme",
-                    "Preview Again"
-                ],
-                bt="Back",
-                bs="X",
-
-                # AQUÍ FORZAMOS ESTILO DEL THEME
-                tcm=selected.titleColorMargins,
-                tct=selected.titleColor,
-                ts=selected.titleStyle,
-
-                sc=selected.subtitleColor,
-                ss=selected.subtitleStyle,
-
-                ock=selected.optionKeyColor,
-                oct=selected.optionColor,
-
-                bck=selected.breakKeyColor,
-                bct=selected.breakColor
-            )
-
-            if preview_choice is None:
-                break
-
-            if preview_choice == 1:
-                setTheme(selected)
-                menu(
-                    t="SUCCESS",
-                    st=f"{selected.name} applied!",
-                    op=["Continue"],
-                    sB=False
-                )
-                break
-
-# =========================================================
-# ANIMATIONS PREVIEW
-# =========================================================
-
-def animations_preview():
-    from . import animations as anim
-
-    animations_list = {
-        "spinner": lambda: anim.spinner("Loading", 2),
-        "dot_ripple": lambda: anim.dot_ripple("Loading", 2),
-        "bounce": lambda: anim.bounce("UI"),
-        "matrix": lambda: anim.matrix("FULLUI"),
-        "fade_in": lambda: anim.fade_in("Hello"),
-        "pulse_bar": lambda: anim.pulse_bar(50),
-        "type_shuffle": lambda: anim.type_shuffle("FULLUI"),
-        "wave": lambda: anim.wave("FULLUI"),
-        "blink": lambda: anim.blink("READY"),
-        "energy_pulse": lambda: anim.energy_pulse("SYSTEM"),
-        "scanline": lambda: anim.scanline("Scanning"),
-        "glitch": lambda: anim.glitch("ERROR")
-    }
-
-    animations_list.update(_ANIMATION_REGISTRY)
-
-    while True:
-        clear()
-        title("ANIMATIONS PREVIEW")
-
-        for i, name in enumerate(animations_list.keys(), 1):
-            print(f"{C.c}[{i}]{S.rs} {name}")
-
-        print("\n" + C.r + "[X] Back" + S.rs)
-
-        choice = input("\n> ")
-
-        if choice.lower() == "x":
-            return
-
-        if choice.isdigit():
-            n = int(choice)
-
-            if 1 <= n <= len(animations_list):
-                clear()
-                name = list(animations_list.keys())[n - 1]
-
-                title(f"RUNNING: {name}")
-
-                try:
-                    animations_list[name]()
-                except Exception as e:
-                    print(C.r + f"Error: {e}" + S.rs)
-
-                pause()
-
-# =========================================================
-# COLOR INSPECTOR
-# =========================================================
-
-def show_colors():
-    clear()
-    title("COLOR INSPECTOR")
-
-    # Obtener atributos válidos
-    colors = {k: v for k, v in C.__dict__.items() if not k.startswith("_")}
-
-    # Agrupar por valor (color real)
-    grouped = {}
-
-    for name, value in colors.items():
-        grouped.setdefault(value, []).append(name)
-
-    # Mostrar agrupados
-    for value, names in grouped.items():
-        main = None
-        alias = None
-
-        # Elegir nombre largo como principal y corto como alias
-        for n in names:
-            if len(n) > 2:
-                main = n
-            else:
-                alias = n
-
-        if main and alias:
-            print(value + f"{main} = {alias}" + S.rs)
-        else:
-            # fallback si no hay alias claro
-            print(value + ", ".join(names) + S.rs)
-
-    # Colores registrados manualmente
-    for k, v in _COLOR_REGISTRY.items():
-        print(v + f"{k} (custom)" + S.rs)
-
-    pause()
-
-# =========================================================
-# REGISTRY INSPECTOR
-# =========================================================
-
-def registry_inspector():
-    clear()
-    title("REGISTRY INSPECTOR")
-
-    print(C.c + "Themes:" + S.rs, len(_THEME_REGISTRY))
-    print(C.c + "Colors:" + S.rs, len(_COLOR_REGISTRY))
-    print(C.c + "Animations:" + S.rs, len(_ANIMATION_REGISTRY))
-
-    pause()
-
-# =========================================================
-# SYSTEM INFO
-# =========================================================
-
-def system_info():
-    clear()
-    title("SYSTEM INFO")
-
-    print(C.c + "Theme:" + S.rs, getTheme().name)
-    print(C.c + "Version:" + S.rs, "0.2.0")
-
-    pause()
 
 # =========================================================
 # BOOK VIEWER
@@ -879,7 +632,6 @@ def menu(**kwargs):
                 normalized.get("optionsColorKeys", C.g),
                 normalized.get("optionsStyle", S.bd),
 
-                # 🔥 UN SOLO GRADIENT PARA TODO (keys + text)
                 gradient=normalized.get("optionsGradient", None)
             )
 
@@ -927,16 +679,77 @@ def menu(**kwargs):
 # MAIN QUIZ UI
 # =========================================================
 
-def titleQuiz(text="", margins="=", width=30, colorMargins=C.r, colorText=C.w, style=S.bd):
-    line = margins * width
-    print(f"{colorText}{style}{text.center(width)}{S.rs}")
-    print(f"{colorMargins}{style}{line}{S.rs}")
+# ================= TITLE QUIZ =================
 
-def question(text, color=C.w, style=S.bd):
+def titleQuiz(
+    text="",
+    margins="=",
+    width=30,
+
+    colorMargins=None,
+    colorText=None,
+    style=None,
+
+    gradientMargins=None,
+    gradientText=None
+):
+    theme = getTheme()
+
+    colorMargins = colorMargins or theme.titleColorMargins
+    colorText = colorText or theme.titleColor
+    style = style or theme.titleStyle
+    gradientMargins = gradientMargins or theme.titleGradientMargins
+    gradientText = gradientText or theme.titleGradient
+
+    # TEXT
+    if gradientText:
+        text_render = gradientText(text)
+    else:
+        text_render = text
+
+    line = margins * width
+
+    # TITLE
+    print(f"{colorText}{style}{text_render.center(width)}{S.rs}")
+
+    # LINE
+    if gradientMargins:
+        print(f"{gradientMargins(line)}{style}{S.rs}")
+    else:
+        print(f"{colorMargins}{style}{line}{S.rs}")
+
+# ================= QUESTION =================
+
+def question(text, color=None, style=None):
+    theme = getTheme()
+
+    color = color or theme.subtitleColor
+    style = style or theme.optionStyle
+
     print(f"\n{color}{style}{text}{S.rs}\n")
 
-def answers(text, num, keyL="(", keyR=")", colorKey=C.y, colorText=C.w, style=S.bd):
-    print(f"{colorKey}{style}{keyL}{num}{keyR}{S.rs} {colorText}{text}{S.rs}")
+# ================= ANSWERS =================
+
+def answers(
+    text,
+    num,
+    keyL="(",
+    keyR=")",
+
+    colorKey=None,
+    colorText=None,
+    style=None
+):
+    theme = getTheme()
+
+    colorKey = colorKey or theme.optionKeyColor
+    colorText = colorText or theme.optionColor
+    style = style or theme.optionStyle
+
+    print(
+        f"{colorKey}{style}{keyL}{num}{keyR}{S.rs} "
+        f"{colorText}{text}{S.rs}"
+    )
 
 
 # =========================================================
@@ -954,9 +767,10 @@ def quiz(**kwargs):
         "tcm": "titleColorMargins",
         "tct": "titleColorText",
         "ts": "titleStyle",
-        "qs": "question",
 
-        "tw": "textWin",
+        "qs": "questions",
+
+        "twin": "textWin",
         "tf": "textFail",
         "tmid": "textMid",
 
@@ -980,14 +794,13 @@ def quiz(**kwargs):
     normalized = {alias_map.get(k, k): v for k, v in kwargs.items()}
     normalized = applyTheme(normalized)
 
-    question = normalized.get("question", [])
+    questions = normalized.get("questions", [])
 
     results = []
     score = 0
 
     # =============== QUESTIONS LOOP ===============
-
-    for idx, q in enumerate(question, 1):
+    for idx, q in enumerate(questions, 1):
 
         while True:
             clear()
@@ -1002,7 +815,7 @@ def quiz(**kwargs):
                     normalized.get("titleStyle", S.bd)
                 )
 
-            print(f"{theme.titleColorMargins}Pregunta {idx}/{len(question)}{S.rs}")
+            print(f"{theme.titleColorMargins}Pregunta {idx}/{len(questions)}{S.rs}")
 
             question(
                 q["question"],
@@ -1048,7 +861,6 @@ def quiz(**kwargs):
             pause()
 
     # =============== RESULTS ===============
-
     clear()
 
     panels = []
@@ -1081,7 +893,7 @@ def quiz(**kwargs):
             )
         )
 
-    total = len(question)
+    total = len(questions)
     percent = int((score / total) * 100)
 
     if score == total:

@@ -2,7 +2,7 @@ from fullui import ui, C, G, animations as anim
 import os
 import subprocess
 
-VERSION = "v0.3.0"
+VERSION = "v0.3.1"
 
 # =========================================================
 # CORE RUNNER

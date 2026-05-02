@@ -3,8 +3,9 @@ icons.py
 
 Icons system for FULLUI.
 
-v0.3.0 ADDITIONS:
-- Added
+v0.3.1 ADDITIONS:
+- Added more icons (arrows, shapes, stars, blocks, bullets, numbers, math symbols, system icons, time icons, media icons, extra symbols)
+- Added ASCII fallback icons for check, cross, and arrow
 """
 
 class I:
@@ -17,7 +18,7 @@ class I:
     # CHECK / STATUS
     # =========================
     check = "✔"; ck = check
-    cross = "✖"; er = cross
+    error = "✖"; er = error
     warning = "⚠"; wr = warning
     info = "ℹ"; inf = info
     plus = "✚"; pl = plus
